@@ -1,0 +1,7 @@
+# Plantilla. Copia a `key.properties` y rellena con los datos reales del keystore.
+# `key.properties` y el `.jks` NO se suben a git (ver android/.gitignore).
+storePassword=CONTRASENA_DEL_ALMACEN
+keyPassword=CONTRASENA_DE_LA_CLAVE
+keyAlias=upload
+# Ruta del keystore relativa a android/app/ (o ruta absoluta).
+storeFile=justfit-upload-keystore.jks

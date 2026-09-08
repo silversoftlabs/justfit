@@ -1,0 +1,17 @@
+gradle-wrapper.jar
+/.gradle
+/captures/
+/gradlew
+/gradlew.bat
+/local.properties
+GeneratedPluginRegistrant.java
+.cxx/
+
+# Firma de release: nunca subir a git.
+key.properties
+**/*.jks
+**/*.keystore
+
+# google-services.json NO se ignora a propósito: no contiene secretos y hace
+# falta para compilar. Si prefieres no versionarlo, añade:
+#   app/google-services.json

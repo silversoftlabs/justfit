@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1021999947238",
+    "project_id": "justfit-b43c0",
+    "storage_bucket": "justfit-b43c0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1021999947238:android:10a651969266cef2480a27",
+        "android_client_info": {
+          "package_name": "com.gamusinlab.justfit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmD7YYnIsRvkvHzQi98bx4nwjLnp9uqxM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

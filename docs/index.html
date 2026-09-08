@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Política de Privacidad · Justfit</title>
+<meta name="description" content="Política de privacidad de la aplicación Justfit: qué datos trata, con qué finalidad y con quién se comparten.">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="Política de Privacidad · Justfit">
+<meta property="og:description" content="Qué datos trata la app Justfit, con qué finalidad y con quién se comparten.">
+<meta property="og:type" content="website">
+<style>
+  :root {
+    --bg: #fbfaf8;
+    --surface: #ffffff;
+    --surface-2: #f4f1ec;
+    --ink: #1c1b19;
+    --muted: #5c5852;
+    --border: #e6e2db;
+    --accent: #7a5c1e;
+    --accent-ink: #5f491c;
+    --accent-soft: #f1e9d9;
+    --focus: #2b6cb0;
+    --maxw: 46rem;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161514;
+      --surface: #1e1d1b;
+      --surface-2: #26241f;
+      --ink: #ece9e3;
+      --muted: #a8a29a;
+      --border: #332f28;
+      --accent: #d9b877;
+      --accent-ink: #e6ca94;
+      --accent-soft: #2a2519;
+      --focus: #7db3ff;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 0;
+    background: var(--surface);
+    color: var(--ink);
+    padding: .7rem 1rem;
+    border: 2px solid var(--focus);
+    border-radius: 8px;
+    z-index: 10;
+  }
+  .skip-link:focus { left: 1rem; top: 1rem; }
+
+  a { color: var(--accent); text-underline-offset: 2px; }
+  a:hover { text-decoration-thickness: 2px; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 3px; }
+
+  .wrap {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1.1rem, 4vw, 2rem) 4rem;
+  }
+
+  header.masthead {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.75rem;
+    margin-bottom: 2rem;
+  }
+  .eyebrow {
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    margin: 0 0 .6rem;
+  }
+  h1 {
+    font-size: clamp(1.75rem, 1.1rem + 3vw, 2.4rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    margin: 0 0 1rem;
+  }
+  .updated {
+    display: inline-block;
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--accent-ink);
+    background: var(--accent-soft);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: .3rem .8rem;
+  }
+  .masthead p { color: var(--muted); margin: 1.1rem 0 0; }
+  .masthead p strong { color: var(--ink); }
+
+  nav.toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.1rem 1.35rem;
+    margin: 0 0 2.5rem;
+  }
+  nav.toc h2 {
+    font-size: .8rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 .7rem;
+    border: 0;
+    padding: 0;
+  }
+  nav.toc ol {
+    margin: 0;
+    padding-left: 1.3rem;
+    columns: 2;
+    column-gap: 1.75rem;
+  }
+  nav.toc li { margin: .28rem 0; break-inside: avoid; }
+  nav.toc a { color: var(--ink); text-decoration: none; }
+  nav.toc a:hover { color: var(--accent); text-decoration: underline; }
+  @media (max-width: 34rem) { nav.toc ol { columns: 1; } }
+
+  main h2 {
+    font-size: 1.3rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    margin: 2.85rem 0 .9rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--border);
+  }
+  main h3 {
+    font-size: 1.03rem;
+    font-weight: 650;
+    margin: 1.9rem 0 .5rem;
+  }
+  main h4 {
+    font-size: .98rem;
+    font-weight: 650;
+    color: var(--accent-ink);
+    margin: 1.5rem 0 .4rem;
+  }
+  p, li { overflow-wrap: break-word; }
+  main p { margin: .9rem 0; }
+  ul, ol { padding-left: 1.4rem; }
+  li { margin: .4rem 0; }
+  strong { font-weight: 650; }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: .88em;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: .08em .38em;
+    word-break: break-word;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    margin: 1.1rem 0;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+  caption {
+    text-align: left;
+    color: var(--muted);
+    font-size: .9rem;
+    padding: .6rem .9rem 0;
+  }
+  th, td {
+    text-align: left;
+    vertical-align: top;
+    padding: .7rem .9rem;
+    border-bottom: 1px solid var(--border);
+  }
+  th { background: var(--surface-2); font-weight: 650; }
+  tr:last-child td { border-bottom: 0; }
+  td + td, th + th { border-left: 1px solid var(--border); }
+
+  hr { border: 0; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+  .contact {
+    margin-top: 2.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.25rem 1.4rem;
+  }
+  .contact p { margin: .3rem 0; }
+
+  footer.pagefoot {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: .88rem;
+  }
+
+  @media print {
+    :root { --bg: #fff; --surface: #fff; --surface-2: #fff; --ink: #000; --muted: #333; --border: #999; --accent: #000; --accent-ink: #000; }
+    body { font-size: 11pt; }
+    nav.toc, .skip-link { display: none; }
+    main h2 { break-after: avoid; }
+    .table-wrap, table, tr, td, th { break-inside: avoid; }
+    a { text-decoration: underline; }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Justfit</p>
+    <h1>Política de Privacidad</h1>
+    <p class="updated">Última actualización: 8 de septiembre de 2026</p>
+    <p>
+      Esta política explica qué información trata la aplicación <strong>Justfit</strong>
+      ("la App"), con qué finalidad y con quién se comparte.
+    </p>
+    <p>
+      Responsable del tratamiento: <strong>gamusinlab</strong> (el "desarrollador").<br>
+      Contacto: <strong><a href="mailto:gamusinlab@gmail.com">gamusinlab@gmail.com</a></strong>
+    </p>
+  </header>
+
+  <nav class="toc" aria-label="Índice de la política">
+    <h2>Contenido</h2>
+    <ol>
+      <li><a href="#resumen">Resumen</a></li>
+      <li><a href="#informacion">Información que se trata y dónde se guarda</a></li>
+      <li><a href="#permisos">Permisos que solicita la App</a></li>
+      <li><a href="#base-juridica">Finalidades y base jurídica (RGPD)</a></li>
+      <li><a href="#conservacion">Conservación de los datos</a></li>
+      <li><a href="#destinatarios">Destinatarios</a></li>
+      <li><a href="#derechos">Tus derechos</a></li>
+      <li><a href="#menores">Menores</a></li>
+      <li><a href="#cambios">Cambios en esta política</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ol>
+  </nav>
+
+  <main id="contenido">
+
+    <h2 id="resumen">1. Resumen</h2>
+    <p>
+      Justfit es un armario digital. Puedes fotografiar tu ropa, organizarla, crear
+      conjuntos, planificar tus outfits en un calendario y recibir una sugerencia de
+      outfit según el tiempo que hace en tu ciudad.
+    </p>
+    <ul>
+      <li><strong>Tus fotos y tu armario se guardan solo en tu dispositivo.</strong>
+        No se suben a ningún servidor del desarrollador ni de terceros.</li>
+      <li><strong>El recorte del fondo de las prendas se hace 100&nbsp;% en tu
+        dispositivo con ONNX Runtime</strong> (modelo U2-Net incluido en la App). La
+        App <strong>no descarga ningún componente adicional después de
+        instalarse</strong> para esta función, y tus fotos <strong>no se envían a
+        Google ni a ningún otro servicio</strong> para recortarlas.</li>
+      <li>Las <strong>sugerencias de outfit ("IA")</strong>, la mejora de imagen y la
+        extracción de color también se calculan <strong>íntegramente en tu
+        dispositivo</strong>.</li>
+      <li>La App <strong>no tiene cuentas de usuario ni inicio de sesión</strong>.</li>
+      <li>La App <strong>no muestra publicidad</strong> ni utiliza servicios de
+        seguimiento publicitario.</li>
+      <li>La App <strong>no vende ni cede</strong> datos personales.</li>
+      <li>La App se conecta a Internet únicamente para: (a) consultar la previsión
+        meteorológica y buscar/identificar ciudades, (b) mostrar el mapa para elegir
+        la ubicación del tiempo y (c) enviar informes de errores para mejorar la
+        estabilidad.</li>
+      <li>La App <strong>no accede al GPS ni a la ubicación real de tu
+        dispositivo</strong>. La ubicación para el tiempo la eliges tú manualmente:
+        escribiendo el nombre de una ciudad o marcando un punto en un mapa.</li>
+    </ul>
+
+    <h2 id="informacion">2. Información que se trata y dónde se guarda</h2>
+
+    <h3>2.1 Datos que permanecen en tu dispositivo (no se transmiten)</h3>
+    <div class="table-wrap">
+      <table>
+        <caption>Datos almacenados únicamente en el dispositivo.</caption>
+        <thead>
+          <tr><th scope="col">Dato</th><th scope="col">Para qué</th><th scope="col">Dónde se guarda</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Fotografías de prendas (cámara o galería)</td><td>Mostrar y organizar tu armario</td><td>Almacenamiento privado de la App</td></tr>
+          <tr><td>Prendas y sus atributos (categoría, color, estilo, temporada, tipo, favorito, archivado)</td><td>Funcionamiento de la App y generación de outfits</td><td>Almacenamiento privado de la App</td></tr>
+          <tr><td>Conjuntos favoritos, historial de outfits usados y planificación de outfits del calendario</td><td>Funcionamiento de la App</td><td>Almacenamiento privado de la App</td></tr>
+          <tr><td>Preferencias del armario: estilo principal, estación activa, categorías personalizadas y reglas de combinación (texto que tú escribes)</td><td>Personalizar la organización y las sugerencias</td><td>Almacenamiento privado de la App</td></tr>
+          <tr><td>Nombre de perfil</td><td>Personalizar la pantalla de perfil</td><td>Almacenamiento privado de la App</td></tr>
+          <tr><td>Preferencias generales: idioma, tema claro/oscuro, ciudad y coordenadas elegidas, si has completado el onboarding</td><td>Recordar tu configuración</td><td>Almacenamiento privado de la App</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p><strong>Todo el procesamiento de imágenes ocurre en tu dispositivo:</strong></p>
+    <ul>
+      <li><strong>Recorte del fondo de la prenda:</strong> modelo U2-Net ejecutado con
+        <strong>ONNX Runtime</strong> (el modelo viaja dentro de la App, no se
+        descarga nada). Si el recorte no encuentra la prenda, se conserva la foto
+        mejorada sin recortar.</li>
+      <li><strong>Mejora de imagen y extracción de color:</strong> cálculo local sobre
+        los píxeles de la foto.</li>
+      <li><strong>Sugerencias de outfit:</strong> un motor de reglas local. No se
+        envían tus fotos, tu armario ni tus preferencias a ningún servicio de
+        inteligencia artificial.</li>
+    </ul>
+    <p>Las imágenes y tus preferencias <strong>no salen del teléfono</strong>.</p>
+    <p>
+      La App incluye además un listado local de localidades (nombres y coordenadas)
+      elaborado a partir de los datos abiertos de <strong>GeoNames.org</strong>
+      (licencia CC BY 4.0), que se consulta <strong>en el dispositivo</strong> para
+      completar el buscador de ciudades en municipios pequeños. Consultar ese listado
+      <strong>no genera ninguna petición a GeoNames</strong>.
+    </p>
+    <p>
+      Las <strong>reglas de combinación</strong> son un campo de texto libre: te
+      recomendamos no escribir en ellas datos personales o sensibles, ya que se
+      guardan como el resto de la configuración de la App.
+    </p>
+    <p>Si desinstalas la App, todos estos datos se eliminan del dispositivo.</p>
+
+    <h3>2.2 Datos que se envían a terceros</h3>
+
+    <h4>a) Previsión meteorológica y búsqueda de ciudades — WeatherAPI.com</h4>
+    <p>
+      Para la función "Outfit del día", el buscador de ubicación y el mapa, la App
+      envía a <strong>WeatherAPI.com</strong> (weatherapi.com):
+    </p>
+    <ul>
+      <li><strong>El nombre de la ciudad que tú escribes</strong> en el buscador, y/o</li>
+      <li><strong>Las coordenadas del punto que tú eliges</strong>: en el buscador son
+        las del centro de la localidad; en el mapa son las del punto exacto que marcas
+        arrastrando el pin (que no es tu posición real, sino el punto que decides
+        señalar).</li>
+    </ul>
+    <p>
+      Con esas coordenadas la App consulta el tiempo y, en el caso del mapa, pide
+      también a WeatherAPI.com el nombre de la localidad más cercana para no guardar
+      una ubicación "sin nombre".
+    </p>
+    <ul>
+      <li>La App <strong>no accede al GPS ni a la ubicación del dispositivo</strong>.</li>
+      <li>Estas peticiones no incluyen tu nombre, identificadores del dispositivo ni
+        ningún dato de cuenta tuyo. Las peticiones viajan con una clave de API propia
+        del desarrollador (no personal ni asociada a ti) que exige WeatherAPI.com para
+        identificar a la App como cliente de su servicio.</li>
+      <li>Información de WeatherAPI.com:
+        <a href="https://www.weatherapi.com/terms.aspx">weatherapi.com/terms.aspx</a> y
+        <a href="https://www.weatherapi.com/privacy.aspx">weatherapi.com/privacy.aspx</a>.</li>
+    </ul>
+
+    <h4>b) Teselas del mapa de ubicación — OpenStreetMap</h4>
+    <p>
+      Si abres el mapa para elegir la ubicación del tiempo, la App descarga las
+      imágenes del mapa ("teselas") de los servidores estándar de la
+      <strong>OpenStreetMap Foundation</strong> (<code>tile.openstreetmap.org</code>).
+      Sobre esas teselas se aplica un filtro de color en el dispositivo para
+      adaptarlas al tema oscuro; la App <strong>no utiliza los mapas base de CARTO /
+      CartoDB</strong> ni ningún otro proveedor de teselas.
+    </p>
+    <p>En esas peticiones tu dispositivo transmite:</p>
+    <ul>
+      <li>Tu <strong>dirección IP</strong> (inevitable en cualquier conexión a
+        Internet).</li>
+      <li>La <strong>zona del mapa que estás viendo</strong> (las teselas concretas
+        que se solicitan), que refleja el área que consultas mientras eliges el
+        punto.</li>
+      <li>Un identificador de la App (<code>User-Agent</code>:
+        <code>com.gamusinlab.justfit</code>), exigido por la política de uso de
+        OpenStreetMap. No te identifica a ti.</li>
+    </ul>
+    <p>
+      Estas peticiones <strong>solo se producen mientras el mapa está abierto</strong>.
+      No se envía tu nombre, tu armario ni ningún dato de cuenta. El tratamiento que
+      hace la OpenStreetMap Foundation de estos datos se rige por su propia política:
+      <a href="https://wiki.osmfoundation.org/wiki/Privacy_Policy">wiki.osmfoundation.org/wiki/Privacy_Policy</a>
+      y las condiciones de uso de las teselas
+      <a href="https://operations.osmfoundation.org/policies/tiles/">operations.osmfoundation.org/policies/tiles</a>.
+    </p>
+
+    <h4>c) Informes de errores — Firebase Crashlytics (Google)</h4>
+    <p>
+      La App utiliza Firebase Crashlytics, de Google Ireland Limited / Google LLC,
+      para detectar y corregir fallos. Cuando la App se cierra de forma inesperada o
+      registra un error, se envía un informe que puede incluir:
+    </p>
+    <ul>
+      <li>Tipo de error y traza de la pila (stack trace).</li>
+      <li>Modelo del dispositivo, fabricante, versión del sistema operativo, idioma,
+        memoria y espacio disponibles, estado de la App en el momento del fallo.</li>
+      <li>Versión de la App y fecha/hora del evento.</li>
+      <li>Un identificador de instalación generado aleatoriamente (Firebase
+        Installation ID), que permite agrupar los fallos de una misma instalación. No
+        identifica tu persona y se elimina si desinstalas la App o borras sus
+        datos.</li>
+    </ul>
+    <p>
+      Estos informes <strong>no incluyen tus fotos ni el contenido de tu
+      armario</strong>. Los informes de errores están activados en la versión
+      publicada de la App.
+    </p>
+    <ul>
+      <li>Política de privacidad de Firebase/Google:
+        <a href="https://firebase.google.com/support/privacy">firebase.google.com/support/privacy</a>.</li>
+      <li>Cómo trata Google los datos de Firebase:
+        <a href="https://firebase.google.com/terms/data-processing-terms">firebase.google.com/terms/data-processing-terms</a>.</li>
+    </ul>
+
+    <h2 id="permisos">3. Permisos que solicita la App</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th scope="col">Permiso</th><th scope="col">Motivo</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Cámara</strong></td><td>Hacer fotos de tus prendas. Puedes usar solo la galería si lo prefieres.</td></tr>
+          <tr><td><strong>Internet</strong></td><td>Consultar el tiempo, mostrar el mapa de ubicación y enviar informes de errores.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      La App <strong>no</strong> solicita permisos de ubicación, micrófono, contactos,
+      ni acceso al almacenamiento compartido más allá del selector de imágenes del
+      sistema.
+    </p>
+
+    <h2 id="base-juridica">4. Finalidades y base jurídica (RGPD)</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th scope="col">Finalidad</th><th scope="col">Base jurídica</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Prestar las funciones de la App (armario, conjuntos, calendario, sugerencias)</td><td>Ejecución de la relación contractual / uso de la App solicitado por ti (art. 6.1.b RGPD)</td></tr>
+          <tr><td>Consultar el tiempo y resolver la ciudad con la ubicación que tú indicas</td><td>Consentimiento al introducir la ubicación y usar la función (art. 6.1.a RGPD)</td></tr>
+          <tr><td>Mostrar el mapa de OpenStreetMap para elegir la ubicación</td><td>Consentimiento al abrir el mapa (art. 6.1.a RGPD)</td></tr>
+          <tr><td>Diagnóstico de fallos y mejora de la estabilidad</td><td>Interés legítimo en mantener la App segura y funcional (art. 6.1.f RGPD)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="conservacion">5. Conservación de los datos</h2>
+    <ul>
+      <li><strong>Datos en el dispositivo:</strong> se conservan mientras la App esté
+        instalada o hasta que borres sus datos o el contenido concreto.</li>
+      <li><strong>Informes de errores en Firebase Crashlytics:</strong> Google los
+        conserva un máximo de <strong>90 días</strong>.</li>
+      <li><strong>Peticiones a WeatherAPI.com y a OpenStreetMap:</strong> las gestiona
+        cada proveedor según su propia política; la App no las almacena ni las asocia
+        a una identidad.</li>
+    </ul>
+
+    <h2 id="destinatarios">6. Destinatarios</h2>
+    <p>No vendemos ni cedemos datos personales. Solo intervienen como proveedores:</p>
+    <ul>
+      <li><strong>Google</strong> (Firebase Crashlytics) — informes de errores.</li>
+      <li><strong>WeatherAPI.com</strong> — previsión meteorológica y geocodificación
+        de ciudades.</li>
+      <li><strong>OpenStreetMap Foundation</strong> (Reino Unido) — imágenes del mapa
+        de ubicación.</li>
+    </ul>
+    <p>
+      Estos proveedores pueden tratar datos fuera del Espacio Económico Europeo (por
+      ejemplo, en Estados Unidos o el Reino Unido). En esos casos, las transferencias
+      se amparan en decisiones de adecuación de la Comisión Europea, en las Cláusulas
+      Contractuales Tipo u otros mecanismos válidos previstos por el RGPD.
+    </p>
+
+    <h2 id="derechos">7. Tus derechos</h2>
+    <p>
+      Puedes ejercer los derechos de acceso, rectificación, supresión, limitación,
+      oposición y portabilidad:
+    </p>
+    <ul>
+      <li><strong>Datos en el dispositivo:</strong> puedes consultarlos, editarlos o
+        eliminarlos directamente en la App, o borrar todos los datos de la App desde
+        los ajustes del sistema operativo.</li>
+      <li><strong>Informes de errores:</strong> escríbenos a
+        <a href="mailto:gamusinlab@gmail.com">gamusinlab@gmail.com</a> y solicitaremos
+        a Google la eliminación de los datos asociados a tu identificador de
+        instalación, en la medida en que sea técnicamente posible.</li>
+    </ul>
+    <p>
+      También tienes derecho a presentar una reclamación ante la autoridad de control
+      competente (en España, la Agencia Española de Protección de Datos,
+      <a href="https://www.aepd.es">aepd.es</a>).
+    </p>
+
+    <h2 id="menores">8. Menores</h2>
+    <p>
+      Justfit no está dirigida a menores de 14 años y no recopila conscientemente
+      datos de menores de esa edad.
+    </p>
+
+    <h2 id="cambios">9. Cambios en esta política</h2>
+    <p>
+      Si modificamos esta política, publicaremos la versión actualizada en esta misma
+      dirección y cambiaremos la fecha de "Última actualización". Los cambios
+      significativos se comunicarán, cuando proceda, dentro de la App o en la ficha de
+      Google Play.
+    </p>
+
+    <h2 id="contacto">10. Contacto</h2>
+    <div class="contact">
+      <p><strong>gamusinlab</strong></p>
+      <p>Correo: <a href="mailto:gamusinlab@gmail.com">gamusinlab@gmail.com</a></p>
+    </div>
+
+  </main>
+
+  <footer class="pagefoot">
+    <p>© 2026 gamusinlab · Justfit. Política de privacidad vigente desde el 8 de septiembre de 2026.</p>
+  </footer>
+
+</div>
+</body>
+</html>

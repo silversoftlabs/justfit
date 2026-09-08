@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter analyze *)",
+      "Bash(flutter build *)",
+      "Bash(curl -s \"https://generativelanguage.googleapis.com/v1beta/models?key=AIzaSyDWnQPmPRFh_oMHWIRuVo-DJq-Y7gCHcmo\")",
+      "Bash(curl *)",
+      "Bash(graphify query *)",
+      "WebFetch(domain:pub.dev)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(flutter pub *)",
+      "WebSearch",
+      "WebFetch(domain:medium.com)",
+      "Read(//tmp/**)",
+      "Bash(mkdir -p \"/c/Users/table/AppData/Local/Temp/claude/C--Users-table-Desktop-armario-virtual/cbf384df-2865-4209-b3e6-c928ebcb0b78/scratchpad\")",
+      "Bash(cp /tmp/fg_readme2.md \"/c/Users/table/AppData/Local/Temp/claude/C--Users-table-Desktop-armario-virtual/cbf384df-2865-4209-b3e6-c928ebcb0b78/scratchpad/fg_readme.md\")",
+      "Bash(cp /tmp/fgmp_readme.md \"/c/Users/table/AppData/Local/Temp/claude/C--Users-table-Desktop-armario-virtual/cbf384df-2865-4209-b3e6-c928ebcb0b78/scratchpad/fgmp_readme.md\")",
+      "Read(//c/Users/table/AppData/Local/Temp/claude/C--Users-table-Desktop-armario-virtual/cbf384df-2865-4209-b3e6-c928ebcb0b78/scratchpad/**)",
+      "Bash(xargs grep -l \"class ModelResponse\")",
+      "Bash(gh api *)",
+      "WebFetch(domain:api.github.com)",
+      "Bash(kill %1)",
+      "Bash(graphify --help)",
+      "Bash(flutter devices *)",
+      "Bash(flutter run *)",
+      "Bash(npx --yes playwright --version)",
+      "Bash(node -e ' *)",
+      "Bash(mkdir -p C:/Users/table/AppData/Local/Temp/claude/C--Users-table-Desktop-armario-virtual/d082a1cd-fbb1-4818-ae95-2ee5baa8b25a/scratchpad/pw)",
+      "Bash(npm init *)",
+      "Bash(npm install *)",
+      "Bash(npx playwright *)",
+      "Bash(taskkill //F //IM dart.exe)",
+      "Bash(taskkill //F //IM flutter.bat)",
+      "Bash(flutter *)",
+      "Bash(python -c \"import onnx; print\\(onnx.__version__\\)\")",
+      "Bash(cd *)",
+      "Bash(python -c ' *)"
+    ]
+  }
+}

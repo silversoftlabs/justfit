@@ -1,0 +1,174 @@
+name: armario_virtual
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Localización de los widgets de Material/Cupertino (selectores de fecha,
+  # semántica, RTL...). Las cadenas propias de la app viven en
+  # assets/l10n/*.json y las carga `AppLocalizations` (lib/l10n).
+  flutter_localizations:
+    sdk: flutter
+  # `intl` lo arrastra flutter_localizations; se fija para usar Intl.canonicalizedLocale.
+  intl: any
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.8
+
+  image_picker: ^1.1.2
+  # Cámara embebida en el propio proceso de Flutter (pantalla
+  # `CameraCaptureScreen`). Sustituye al intent de cámara del sistema al
+  # AÑADIR prendas: ese intent abre un proceso aparte y pesado y, en gama
+  # baja, Android liquida el proceso de la app mientras está en primer plano
+  # y devuelve un archivo de 0 bytes. Con la cámara embebida la captura ocurre
+  # aquí, sin cambiar de proceso. La galería sigue usando `image_picker`.
+  camera: ^0.11.0
+  provider: ^6.1.2
+  path_provider: ^2.1.4
+  shared_preferences: ^2.3.2
+  # Cliente HTTP para WeatherService: consulta WeatherAPI
+  # (https://www.weatherapi.com/) para el pronóstico y el buscador de
+  # ciudades de la pantalla "Outfit del día". Requiere clave de API, ver
+  # WeatherApiConfig en lib/services/weather_service.dart.
+  http: ^1.2.0
+  # Decodificación/recodificación y manipulación de píxeles de las fotos
+  # (mejora, composición y aplicación de la máscara de recorte).
+  image: ^4.5.2
+
+  # Motor de recorte de fondo de las prendas: U2-Netp (NathanUA/U2-Net,
+  # Apache-2.0; export ONNX oficial de https://github.com/danielgatis/rembg)
+  # en ONNX Runtime, 100% on-device y con licencia libre para uso comercial.
+  # El modelo va en assets/models (ver la sección flutter/assets de abajo) y
+  # lo ejecuta U2NetSegmentationService en un isolate propio. No hay descargas
+  # tras la instalación: si el recorte falla, la prenda se guarda con la foto
+  # mejorada sin recortar.
+  onnxruntime: ^1.4.1
+
+  firebase_core: ^4.14.0
+  firebase_crashlytics: ^5.3.0
+
+  # Mapa interactivo para elegir la ubicación del tiempo tocando/arrastrando
+  # un pin (ver `MapLocationPicker`). Usa las teselas de OpenStreetMap
+  # (https://tile.openstreetmap.org) — sin clave de API y con licencia libre
+  # para uso comercial, respetando su política de uso (User-Agent propio y
+  # atribución visible "© OpenStreetMap"). Las coordenadas elegidas van
+  # directas a `WeatherService.fetchAt` vía `LocationProvider.setPlace`, sin
+  # geocodificación de texto. `latlong2` es el tipo `LatLng` que pide flutter_map.
+  flutter_map: ^8.3.2
+  latlong2: ^0.10.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^6.0.0
+
+  # Genera los iconos de lanzador (Android + iOS) a partir de
+  # assets/icon/app_icon.png. Ejecutar `dart run flutter_launcher_icons`
+  # tras cambiar la imagen. Ver la sección `flutter_launcher_icons` al final.
+  flutter_launcher_icons: ^0.14.4
+
+# Configuración del icono de la app (emblema dorado del logo sobre fondo negro).
+# El emblema se extrae de imagenes_importadas/logo_armario_editado.svg.
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/app_icon.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
+  background_color_ios: "#000000"
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  assets:
+    # Diccionarios de traducción (español / inglés). Los carga
+    # `AppLocalizations` (lib/l10n/app_localizations.dart).
+    - assets/l10n/en.json
+    - assets/l10n/es.json
+    # Modelo U2-Netp (NathanUA/U2-Net, licencia Apache-2.0 — libre para uso
+    # comercial), ~4,6 MB. Lo carga U2NetSegmentationService para recortar el
+    # fondo de las prendas sin red. Se declara el archivo concreto, no la
+    # carpeta, para no arrastrar al bundle cualquier otro .onnx que se deje
+    # ahí durante pruebas.
+    - assets/models/u2netp.onnx
+    # Listado local (sin red) de ~8.500 localidades españolas con
+    # coordenadas, filtrado de la base de datos de GeoNames.org (licencia
+    # CC BY 4.0 — atribución en el footer de ProfileSheet). Lo consulta
+    # SpanishMunicipalitiesService para tapar el hueco de cobertura del
+    # buscador de WeatherAPI en municipios pequeños. Ver
+    # tools/generar_es_municipios.py para regenerarlo.
+    - assets/data/es_municipios.json
+    # Emblema dorado de la marca JUSTFIT (extraído de
+    # imagenes_importadas/logo_armario_editado.svg), usado en la pantalla de
+    # Onboarding. PNG con transparencia real.
+    - assets/branding/justfit_emblem.png
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/to/resolution-aware-images
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/to/asset-from-package
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/to/font-from-package

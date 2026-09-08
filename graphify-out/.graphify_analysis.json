@@ -1,0 +1,466 @@
+{
+  "communities": {
+    "0": [
+      "point",
+      "rect",
+      "size",
+      "unique_ptr",
+      "windows_runner_flutter_window_cpp_dartproject",
+      "windows_runner_flutter_window_cpp_hwnd",
+      "windows_runner_flutter_window_cpp_lparam",
+      "windows_runner_flutter_window_cpp_lresult",
+      "windows_runner_flutter_window_cpp_uint",
+      "windows_runner_flutter_window_cpp_windows_runner_flutter_window",
+      "windows_runner_flutter_window_cpp_wparam",
+      "windows_runner_flutter_window_flutterwindow",
+      "windows_runner_flutter_window_flutterwindow_flutter_controller",
+      "windows_runner_flutter_window_flutterwindow_flutterwindow",
+      "windows_runner_flutter_window_flutterwindow_messagehandler",
+      "windows_runner_flutter_window_flutterwindow_oncreate",
+      "windows_runner_flutter_window_flutterwindow_ondestroy",
+      "windows_runner_flutter_window_flutterwindow_project",
+      "windows_runner_flutter_window_h_dartproject",
+      "windows_runner_flutter_window_h_windows_runner_flutter_window",
+      "windows_runner_resource",
+      "windows_runner_win32_window_cpp_hwnd",
+      "windows_runner_win32_window_cpp_lparam",
+      "windows_runner_win32_window_cpp_lresult",
+      "windows_runner_win32_window_cpp_uint",
+      "windows_runner_win32_window_cpp_wchar_t",
+      "windows_runner_win32_window_cpp_windows_runner_win32_window",
+      "windows_runner_win32_window_cpp_wparam",
+      "windows_runner_win32_window_enablefulldpisupportifavailable",
+      "windows_runner_win32_window_h_hwnd",
+      "windows_runner_win32_window_h_windows_runner_win32_window",
+      "windows_runner_win32_window_scale",
+      "windows_runner_win32_window_win32window",
+      "windows_runner_win32_window_win32window_child_content",
+      "windows_runner_win32_window_win32window_create",
+      "windows_runner_win32_window_win32window_destroy",
+      "windows_runner_win32_window_win32window_getclientarea",
+      "windows_runner_win32_window_win32window_gethandle",
+      "windows_runner_win32_window_win32window_getthisfromhandle",
+      "windows_runner_win32_window_win32window_messagehandler",
+      "windows_runner_win32_window_win32window_oncreate",
+      "windows_runner_win32_window_win32window_ondestroy",
+      "windows_runner_win32_window_win32window_quit_on_close",
+      "windows_runner_win32_window_win32window_setchildcontent",
+      "windows_runner_win32_window_win32window_setquitonclose",
+      "windows_runner_win32_window_win32window_show",
+      "windows_runner_win32_window_win32window_updatetheme",
+      "windows_runner_win32_window_win32window_win32window",
+      "windows_runner_win32_window_win32window_window_handle",
+      "windows_runner_win32_window_win32window_wndproc",
+      "windows_runner_win32_window_windowclassregistrar",
+      "windows_runner_win32_window_windowclassregistrar_class_registered",
+      "windows_runner_win32_window_windowclassregistrar_getinstance",
+      "windows_runner_win32_window_windowclassregistrar_getwindowclass",
+      "windows_runner_win32_window_windowclassregistrar_instance",
+      "windows_runner_win32_window_windowclassregistrar_unregisterwindowclass",
+      "windows_runner_win32_window_windowclassregistrar_windowclassregistrar",
+      "wstring"
+    ],
+    "1": [
+      "add_garment_screen_dart",
+      "changenotifier",
+      "dart_io",
+      "file",
+      "imagesource",
+      "lib_providers_wardrobe_provider_wardrobeprovider",
+      "lib_screens_add_garment_screen",
+      "lib_screens_add_garment_screen_addgarmentscreen",
+      "lib_screens_add_garment_screen_addgarmentscreenstate",
+      "lib_screens_add_garment_screen_build",
+      "lib_screens_add_garment_screen_category",
+      "lib_screens_add_garment_screen_color",
+      "lib_screens_add_garment_screen_coloroptions",
+      "lib_screens_add_garment_screen_createstate",
+      "lib_screens_add_garment_screen_pickedimage",
+      "lib_screens_add_garment_screen_picker",
+      "lib_screens_add_garment_screen_pickimage",
+      "lib_screens_add_garment_screen_save",
+      "lib_screens_add_garment_screen_saving",
+      "lib_screens_add_garment_screen_style",
+      "lib_screens_home_screen",
+      "lib_screens_home_screen_build",
+      "lib_screens_home_screen_createstate",
+      "lib_screens_home_screen_garment",
+      "lib_screens_home_screen_hasfilter",
+      "lib_screens_home_screen_homescreen",
+      "lib_screens_home_screen_homescreenstate",
+      "lib_screens_home_screen_ondelete",
+      "lib_screens_home_screen_selectedcategory",
+      "lib_screens_outfit_screen_build",
+      "lib_screens_outfit_screen_outfitscreen",
+      "lib_screens_outfit_screen_outfitscreenstate",
+      "materialpageroute",
+      "package_image_picker_image_picker_dart",
+      "package_path_provider_path_provider_dart",
+      "state",
+      "statefulwidget",
+      "voidcallback"
+    ],
+    "2": [
+      "dart_math",
+      "lib_main",
+      "lib_main_armariovirtualapp",
+      "lib_main_build",
+      "lib_main_createstate",
+      "lib_main_currentindex",
+      "lib_main_main",
+      "lib_main_mainnavigation",
+      "lib_main_mainnavigationstate",
+      "lib_main_screens",
+      "lib_screens_home_screen_emptystate",
+      "lib_screens_home_screen_garmentcard",
+      "lib_screens_outfit_screen",
+      "lib_screens_outfit_screen_bottom",
+      "lib_screens_outfit_screen_createstate",
+      "lib_screens_outfit_screen_garment",
+      "lib_screens_outfit_screen_generated",
+      "lib_screens_outfit_screen_generateoutfit",
+      "lib_screens_outfit_screen_introstate",
+      "lib_screens_outfit_screen_label",
+      "lib_screens_outfit_screen_missing",
+      "lib_screens_outfit_screen_outfitcard",
+      "lib_screens_outfit_screen_outfitpiece",
+      "lib_screens_outfit_screen_random",
+      "lib_screens_outfit_screen_shoes",
+      "lib_screens_outfit_screen_top",
+      "lib_screens_outfit_screen_topcategories",
+      "package_armario_virtual_main_dart",
+      "package_flutter_material_dart",
+      "package_flutter_test_flutter_test_dart",
+      "package_provider_provider_dart",
+      "providers_wardrobe_provider_dart",
+      "screens_home_screen_dart",
+      "screens_outfit_screen_dart",
+      "statelesswidget",
+      "static_const",
+      "test_widget_test",
+      "test_widget_test_main"
+    ],
+    "3": [
+      "cocoa",
+      "file_selector_macos",
+      "flutter",
+      "fluttermacos",
+      "flutterpluginregistry",
+      "flutterscenedelegate",
+      "flutterviewcontroller",
+      "foundation",
+      "ios_runner_appdelegate",
+      "ios_runner_scenedelegate",
+      "ios_runner_scenedelegate_scenedelegate",
+      "ios_runnertests_runnertests",
+      "ios_runnertests_runnertests_runnertests",
+      "ios_runnertests_runnertests_runnertests_testexample",
+      "macos_flutter_generatedpluginregistrant",
+      "macos_flutter_generatedpluginregistrant_registergeneratedplugins",
+      "macos_runner_appdelegate",
+      "macos_runner_mainflutterwindow",
+      "macos_runner_mainflutterwindow_mainflutterwindow",
+      "macos_runner_mainflutterwindow_mainflutterwindow_awakefromnib",
+      "macos_runnertests_runnertests",
+      "macos_runnertests_runnertests_runnertests",
+      "macos_runnertests_runnertests_runnertests_testexample",
+      "nswindow",
+      "shared_preferences_foundation",
+      "uikit",
+      "xctest",
+      "xctestcase"
+    ],
+    "4": [
+      "flpluginregistry",
+      "flview",
+      "gapplication",
+      "gboolean",
+      "gchar",
+      "gobject",
+      "gtkapplication",
+      "linux_flutter_generated_plugin_registrant_cc_linux_flutter_generated_plugin_registrant",
+      "linux_flutter_generated_plugin_registrant_fl_register_plugins",
+      "linux_flutter_generated_plugin_registrant_h_linux_flutter_generated_plugin_registrant",
+      "linux_runner_main",
+      "linux_runner_main_main",
+      "linux_runner_my_application_cc_linux_runner_my_application",
+      "linux_runner_my_application_first_frame_cb",
+      "linux_runner_my_application_h_linux_runner_my_application",
+      "linux_runner_my_application_my_application_activate",
+      "linux_runner_my_application_my_application_class_init",
+      "linux_runner_my_application_my_application_dispose",
+      "linux_runner_my_application_my_application_init",
+      "linux_runner_my_application_my_application_local_command_line",
+      "linux_runner_my_application_my_application_new",
+      "linux_runner_my_application_my_application_shutdown",
+      "linux_runner_my_application_my_application_startup",
+      "linux_runner_my_application_myapplication",
+      "linux_runner_my_application_myapplication_dart_entrypoint_arguments",
+      "linux_runner_my_application_myapplication_parent_instance",
+      "myapplicationclass"
+    ],
+    "5": [
+      "datetime",
+      "lib_models_garment",
+      "lib_models_garment_category",
+      "lib_models_garment_color",
+      "lib_models_garment_copywith",
+      "lib_models_garment_createdat",
+      "lib_models_garment_fromjson",
+      "lib_models_garment_garment",
+      "lib_models_garment_garmentcategory",
+      "lib_models_garment_garmentcategorylabel",
+      "lib_models_garment_garmentstyle",
+      "lib_models_garment_garmentstylelabel",
+      "lib_models_garment_id",
+      "lib_models_garment_imagepath",
+      "lib_models_garment_style",
+      "lib_models_garment_tojson"
+    ],
+    "6": [
+      "any",
+      "flutterappdelegate",
+      "flutterimplicitenginebridge",
+      "flutterimplicitenginedelegate",
+      "ios_runner_appdelegate_appdelegate",
+      "ios_runner_appdelegate_appdelegate_application",
+      "ios_runner_appdelegate_appdelegate_didinitializeimplicitflutterengine",
+      "ios_runner_appdelegate_swift_bool",
+      "macos_runner_appdelegate_appdelegate",
+      "macos_runner_appdelegate_appdelegate_applicationshouldterminateafterlastwindowclosed",
+      "macos_runner_appdelegate_appdelegate_applicationsupportssecurerestorablestate",
+      "macos_runner_appdelegate_swift_bool",
+      "nsapplication",
+      "uiapplication"
+    ],
+    "7": [
+      "dart_convert",
+      "lib_providers_wardrobe_provider",
+      "lib_providers_wardrobe_provider_addgarment",
+      "lib_providers_wardrobe_provider_bycategory",
+      "lib_providers_wardrobe_provider_garments",
+      "lib_providers_wardrobe_provider_loadgarments",
+      "lib_providers_wardrobe_provider_persist",
+      "lib_providers_wardrobe_provider_removegarment",
+      "lib_providers_wardrobe_provider_storagekey",
+      "list",
+      "models_garment_dart",
+      "package_flutter_foundation_dart",
+      "package_shared_preferences_shared_preferences_dart"
+    ],
+    "8": [
+      "in",
+      "in_opt",
+      "string",
+      "vector",
+      "windows_runner_main",
+      "windows_runner_main_wwinmain",
+      "windows_runner_utils_cpp_wchar_t",
+      "windows_runner_utils_cpp_windows_runner_utils",
+      "windows_runner_utils_createandattachconsole",
+      "windows_runner_utils_getcommandlinearguments",
+      "windows_runner_utils_h_windows_runner_utils",
+      "windows_runner_utils_utf8fromutf16"
+    ],
+    "9": [
+      "web_manifest",
+      "web_manifest_background_color",
+      "web_manifest_description",
+      "web_manifest_display",
+      "web_manifest_icons",
+      "web_manifest_name",
+      "web_manifest_orientation",
+      "web_manifest_prefer_related_applications",
+      "web_manifest_short_name",
+      "web_manifest_start_url",
+      "web_manifest_theme_color"
+    ],
+    "10": [
+      "pluginregistry",
+      "windows_flutter_generated_plugin_registrant_cc_windows_flutter_generated_plugin_registrant",
+      "windows_flutter_generated_plugin_registrant_h_windows_flutter_generated_plugin_registrant",
+      "windows_flutter_generated_plugin_registrant_registerplugins"
+    ],
+    "11": [
+      "android_app_src_main_kotlin_com_armariovirtual_armario_virtual_mainactivity",
+      "android_app_src_main_kotlin_com_armariovirtual_armario_virtual_mainactivity_mainactivity",
+      "flutteractivity"
+    ],
+    "12": [
+      "android_app_build_gradle"
+    ],
+    "13": [
+      "android_build_gradle"
+    ],
+    "14": [
+      "android_settings_gradle"
+    ],
+    "15": [
+      "ios_runner_runner_bridging_header"
+    ]
+  },
+  "cohesion": {
+    "0": 0.06594071385359952,
+    "1": 0.06827880512091039,
+    "2": 0.06116642958748222,
+    "3": 0.0873015873015873,
+    "4": 0.09401709401709402,
+    "5": 0.14166666666666666,
+    "6": 0.16483516483516483,
+    "7": 0.15384615384615385,
+    "8": 0.25757575757575757,
+    "9": 0.18181818181818182,
+    "10": 0.5,
+    "11": 0.6666666666666666,
+    "12": 1.0,
+    "13": 1.0,
+    "14": 1.0,
+    "15": 1.0
+  },
+  "gods": [
+    {
+      "id": "windows_runner_win32_window_win32window",
+      "label": "Win32Window",
+      "degree": 22
+    },
+    {
+      "id": "windows_runner_win32_window_win32window_messagehandler",
+      "label": "MessageHandler",
+      "degree": 12
+    },
+    {
+      "id": "lib_providers_wardrobe_provider_wardrobeprovider",
+      "label": "WardrobeProvider",
+      "degree": 11
+    },
+    {
+      "id": "windows_runner_flutter_window_flutterwindow",
+      "label": "FlutterWindow",
+      "degree": 10
+    },
+    {
+      "id": "windows_runner_win32_window_win32window_create",
+      "label": "Create",
+      "degree": 10
+    },
+    {
+      "id": "windows_runner_win32_window_win32window_wndproc",
+      "label": "WndProc",
+      "degree": 10
+    },
+    {
+      "id": "windows_runner_flutter_window_flutterwindow_messagehandler",
+      "label": "MessageHandler",
+      "degree": 9
+    },
+    {
+      "id": "linux_runner_my_application_myapplication",
+      "label": "_MyApplication",
+      "degree": 7
+    },
+    {
+      "id": "windows_runner_flutter_window_flutterwindow_oncreate",
+      "label": "OnCreate",
+      "degree": 7
+    },
+    {
+      "id": "windows_runner_win32_window_windowclassregistrar",
+      "label": "WindowClassRegistrar",
+      "degree": 7
+    }
+  ],
+  "surprises": [
+    {
+      "source": "OnCreate",
+      "target": "RegisterPlugins()",
+      "source_files": [
+        "windows/runner/flutter_window.h",
+        "windows/flutter/generated_plugin_registrant.cc"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; bridges separate communities"
+    },
+    {
+      "source": "wWinMain()",
+      "target": "CreateAndAttachConsole()",
+      "source_files": [
+        "windows/runner/main.cpp",
+        "windows/runner/utils.cpp"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; peripheral node `CreateAndAttachConsole()` unexpectedly reaches hub `wWinMain()`"
+    },
+    {
+      "source": "Win32Window::Win32Window()",
+      "target": "Destroy",
+      "source_files": [
+        "windows/runner/win32_window.cpp",
+        "windows/runner/win32_window.h"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; peripheral node `Win32Window::Win32Window()` unexpectedly reaches hub `Destroy`"
+    },
+    {
+      "source": "_save",
+      "target": "WardrobeProvider",
+      "source_files": [
+        "lib/screens/add_garment_screen.dart",
+        "lib/providers/wardrobe_provider.dart"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "peripheral node `_save` unexpectedly reaches hub `WardrobeProvider`"
+    },
+    {
+      "source": "build",
+      "target": "WardrobeProvider",
+      "source_files": [
+        "lib/screens/outfit_screen.dart",
+        "lib/providers/wardrobe_provider.dart"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "peripheral node `build` unexpectedly reaches hub `WardrobeProvider`"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `FlutterWindow` connect `Win32Window` to `GeneratedPluginRegistrant.swift`?",
+      "why": "High betweenness centrality (0.099) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 4 inferred relationships involving `MessageHandler` (e.g. with `Destroy` and `GetClientArea`) actually correct?",
+      "why": "`MessageHandler` has 4 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 2 inferred relationships involving `Create` (e.g. with `Destroy` and `UpdateTheme`) actually correct?",
+      "why": "`Create` has 2 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `_currentIndex`, `_screens`, `main` to the rest of the system?",
+      "why": "70 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Win32Window` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.06594071385359952 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `add_garment_screen.dart` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.06827880512091039 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `outfit_screen.dart` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.06116642958748222 - nodes in this community are weakly interconnected."
+    }
+  ]
+}
