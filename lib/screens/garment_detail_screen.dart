@@ -11,6 +11,8 @@ import '../widgets/app_snackbar.dart';
 import '../widgets/category_badge.dart';
 import '../widgets/outfit_flat_lay_view.dart';
 import '../widgets/versatility_badge.dart';
+import '../theme/ios_design.dart';
+import '../widgets/pressable_scale.dart';
 
 class GarmentDetailScreen extends StatelessWidget {
   final Garment garment;
@@ -21,10 +23,10 @@ class GarmentDetailScreen extends StatelessWidget {
     HapticFeedback.mediumImpact();
     final scheme = Theme.of(context).colorScheme;
 
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showSoftDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: squircle(20),
         title: const Text('Eliminar prenda'),
         content: const Text('Esta acción no se puede deshacer.'),
         actions: [
@@ -32,11 +34,11 @@ class GarmentDetailScreen extends StatelessWidget {
             onPressed: () => Navigator.of(dialogContext).pop(false),
             child: const Text('Cancelar'),
           ),
-          FilledButton(
+          PressableScale.passive(child: FilledButton(
             style: FilledButton.styleFrom(backgroundColor: scheme.error),
             onPressed: () => Navigator.of(dialogContext).pop(true),
             child: const Text('Eliminar'),
-          ),
+          )),
         ],
       ),
     );
@@ -59,17 +61,25 @@ class GarmentDetailScreen extends StatelessWidget {
     final typeLabel = garment.tipoPrenda?.nombre ?? garment.superCategory.label;
 
     return Scaffold(
-      appBar: AppBar(title: Text(typeLabel)),
+      extendBodyBehindAppBar: true,
+      appBar: GlassAppBar(title: Text(typeLabel)),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.fromLTRB(
+          kPageMargin,
+          glassBodyTopPadding(context) + 12,
+          kPageMargin,
+          24 + MediaQuery.paddingOf(context).bottom,
+        ),
         children: [
           Container(
-            decoration: BoxDecoration(
-              borderRadius: radius,
+            decoration: ShapeDecoration(
               color: scheme.surfaceContainerHighest,
-              boxShadow: cardElevation(context),
+              shape: RoundedSuperellipseBorder(
+                borderRadius: radius,
+              ),
+              shadows: cardElevation(context),
             ),
-            child: ClipRRect(
+            child: ClipRSuperellipse(
               borderRadius: radius,
               child: Stack(
                 children: [
@@ -84,11 +94,11 @@ class GarmentDetailScreen extends StatelessWidget {
                     ),
                   ),
                   DecoratedBox(
-                    decoration: BoxDecoration(
-                      borderRadius: radius,
-                      border: Border.all(
-                        color: cardHairlineColor(context),
-                        width: 1,
+                    decoration: ShapeDecoration(
+                      shape: RoundedSuperellipseBorder(
+                        borderRadius: radius,
+                        side: BorderSide(color: cardHairlineColor(context),
+                          width: 1,),
                       ),
                     ),
                   ),
@@ -121,22 +131,19 @@ class GarmentDetailScreen extends StatelessWidget {
                 ),
           ),
           const SizedBox(height: 28),
-          FilledButton.tonalIcon(
+          PressableScale.passive(child: FilledButton.tonalIcon(
             onPressed: () => _confirmDelete(context),
             icon: const Icon(Icons.delete_outline),
             label: const Text('Eliminar prenda'),
             style: FilledButton.styleFrom(
               minimumSize: const Size.fromHeight(50),
+              // El fondo tonal por defecto (`secondaryContainer`) choca con el
+              // rojo del texto/icono; se usa el par de error del tema
+              // (`errorContainer` se define en main.dart para ambos modos).
               foregroundColor: scheme.error,
-              // En modo oscuro el fondo tonal por defecto (`secondaryContainer`)
-              // es un morado apagado que choca con el rojo del texto/icono; se
-              // sustituye por un rojo translúcido acorde a la acción destructiva.
-              // En modo claro se deja el tonal por defecto (null).
-              backgroundColor: scheme.brightness == Brightness.dark
-                  ? scheme.error.withValues(alpha: 0.16)
-                  : null,
+              backgroundColor: scheme.errorContainer,
             ),
-          ),
+          )),
         ],
       ),
     );

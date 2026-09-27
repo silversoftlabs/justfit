@@ -79,10 +79,12 @@ class CategoryBadge extends StatelessWidget {
             ? const Color(0xFF33473B)
             : Theme.of(context).colorScheme.primary);
     return DecoratedBox(
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: bg,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        shadows: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.12),
             blurRadius: 6,

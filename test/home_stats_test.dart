@@ -63,18 +63,27 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.textContaining('Outfits guardados: 0'), findsOneWidget);
+      // Cifra mostrada en la tarjeta cuya etiqueta es "Outfits guardados".
+      Finder outfitsValue(String value) => find.descendant(
+            of: find.ancestor(
+              of: find.text('Outfits guardados'),
+              matching: find.byType(Column),
+            ).first,
+            matching: find.text(value),
+          );
+
+      expect(outfitsValue('0'), findsOneWidget);
       expect(find.textContaining('Outfits creados'), findsNothing);
 
       await favorites.addFavoriteOutfit(garmentIds: ['a', 'b'], tags: const []);
       await tester.pump();
 
-      expect(find.textContaining('Outfits guardados: 1'), findsOneWidget);
+      expect(outfitsValue('1'), findsOneWidget);
 
       await favorites.removeFavoriteOutfit(favorites.favorites.single.id);
       await tester.pump();
 
-      expect(find.textContaining('Outfits guardados: 0'), findsOneWidget);
+      expect(outfitsValue('0'), findsOneWidget);
     },
     timeout: _fastFail,
   );

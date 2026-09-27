@@ -9,18 +9,20 @@ import '../l10n/app_localizations.dart';
 import '../providers/locale_provider.dart';
 import '../providers/location_provider.dart';
 import '../services/place_search_service.dart';
-import '../widgets/city_autocomplete_field.dart';
 import '../widgets/map_location_picker.dart';
+import '../theme/ios_design.dart';
+import '../widgets/pressable_scale.dart';
 
 /// Pantalla de bienvenida que se muestra una única vez, antes de entrar a la
-/// app. Cuatro slides deslizables (idioma, nombre + ubicación para el clima,
-/// cómo organizar el armario y bienvenida) con indicador de páginas y botón
-/// "Saltar". Persistencia:
+/// app. Cinco slides deslizables (idioma, nombre, ciudad, cómo organizar el
+/// armario y bienvenida) con una barra de progreso lineal fina arriba y botón
+/// "Saltar". El nombre es obligatorio y la ciudad solo se elige en el mapa
+/// (`MapLocationPicker`). Persistencia:
 ///
 ///  - El idioma se aplica y guarda EN VIVO al tocar la tarjeta del slide 1
 ///    (`LocaleProvider.setLanguage` → clave `app_language`).
 ///  - La ciudad la guarda `LocationProvider.setPlace` (nombre + coordenadas).
-///  - Al terminar: `hasCompletedOnboarding = true` y `user_name` (si no vacío).
+///  - Al terminar: `hasCompletedOnboarding = true` y `user_name`.
 ///
 /// Va en modo oscuro (la app es "dark first"): fondo #1A1A1A, contenedores
 /// #242424, texto claro y acento dorado #CBA75D. Los colores están fijados
@@ -47,12 +49,15 @@ const _gold = Color(0xFFCBA75D); // acento (sin cambios)
 const _line = Color(0xFF3C3A36); // bordes sutiles de tarjeta/campo
 const _danger = Color(0xFFF2B8B5); // aviso "falta la ciudad" legible sobre _bg
 
-const _pageCount = 4;
+const _pageCount = 5;
 
-/// Índice del slide "Sobre ti" (nombre + ciudad). Es donde la ubicación es
-/// obligatoria: sin una ciudad elegida de las sugerencias no se puede pasar
-/// de aquí (ver el botón inferior en `_OnboardingScreenState.build`).
-const _locationPageIndex = 1;
+/// Slide del nombre: obligatorio, no se puede pasar de aquí con el campo vacío.
+const _namePageIndex = 1;
+
+/// Slide de la ciudad: obligatoria y solo mediante el mapa; sin una ubicación
+/// elegida no se puede pasar de aquí (ver el botón inferior en
+/// `_OnboardingScreenState.build`).
+const _locationPageIndex = 2;
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final _pageController = PageController();
@@ -61,8 +66,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   late String _language = context.read<LocaleProvider>().languageCode;
   bool _saving = false;
 
-  /// Ciudad elegida en el autocompletado. Obligatoria para pasar del slide
-  /// [_locationPageIndex]; `null` hasta que el usuario toca una sugerencia.
+  /// `true` tras intentar avanzar con el nombre vacío: muestra el error bajo
+  /// el campo hasta que el usuario escribe algo.
+  bool _nameError = false;
+
+  /// Ubicación elegida en el mapa. Obligatoria para pasar del slide
+  /// [_locationPageIndex]; `null` hasta que el usuario confirma un punto.
   PlaceResult? _selectedPlace;
 
   @override
@@ -80,27 +89,58 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  /// `onPageChanged` del `PageView`. La ubicación es obligatoria: si el usuario
-  /// consigue arrastrar (fling, arrastre largo…) más allá del slide
-  /// [_locationPageIndex] sin una ciudad válida, se le devuelve a ese slide con
-  /// una animación en el frame siguiente. Así el gesto en curso termina de
-  /// forma natural y la vista queda 100 % alineada, en vez de congelar el
-  /// `PageController` a medio camino cambiando la física en mitad del arrastre.
+  /// Primer slide obligatorio aún incompleto (nombre, luego ciudad), o `null`
+  /// si ya se puede llegar hasta el final.
+  int? _firstBlockedPage() {
+    if (_nameController.text.trim().isEmpty) return _namePageIndex;
+    if (_selectedPlace == null) return _locationPageIndex;
+    return null;
+  }
+
+  /// `onPageChanged` del `PageView`. Nombre y ciudad son obligatorios: si el
+  /// usuario consigue arrastrar (fling, arrastre largo…) más allá del primer
+  /// slide incompleto, se le devuelve a él con una animación en el frame
+  /// siguiente. Así el gesto en curso termina de forma natural y la vista
+  /// queda 100 % alineada, en vez de congelar el `PageController` a medio
+  /// camino cambiando la física en mitad del arrastre.
   void _onPageChanged(int page) {
-    if (page > _locationPageIndex && _selectedPlace == null) {
+    final blocked = _firstBlockedPage();
+    if (blocked != null && page > blocked) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _goToPage(_locationPageIndex);
+        if (!mounted) return;
+        if (blocked == _namePageIndex) setState(() => _nameError = true);
+        _goToPage(blocked);
       });
       return;
     }
     setState(() => _page = page);
   }
 
-  /// "Saltar" no puede saltarse el paso de ciudad: sin una ubicación válida
-  /// lleva al usuario al slide de ubicación en vez de terminar el onboarding.
+  /// "Continuar": en el slide del nombre valida que no esté vacío y, si lo
+  /// está, muestra el error en vez de avanzar.
+  void _onContinue() {
+    if (_page == _namePageIndex && _nameController.text.trim().isEmpty) {
+      HapticFeedback.lightImpact();
+      setState(() => _nameError = true);
+      return;
+    }
+    _goToPage(_page + 1);
+  }
+
+  void _onNameChanged(String value) {
+    // Reconstruye siempre: "Saltar" depende de si el nombre está vacío.
+    setState(() {
+      if (value.trim().isNotEmpty) _nameError = false;
+    });
+    _persistName(value);
+  }
+
+  /// "Saltar" no puede saltarse los pasos obligatorios: sin nombre o sin
+  /// ubicación lleva al usuario a ese slide en vez de terminar el onboarding.
   void _onSkip() {
-    if (_selectedPlace == null) {
-      _goToPage(_locationPageIndex);
+    final blocked = _firstBlockedPage();
+    if (blocked != null) {
+      _goToPage(blocked);
       return;
     }
     _finish();
@@ -163,6 +203,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final t = AppLocalizations.of(context);
     final isLast = _page == _pageCount - 1;
     final locationRequired = _page == _locationPageIndex && _selectedPlace == null;
+    // "Saltar" se oculta en el slide obligatorio que aún falta por completar.
+    final skipHidden = _firstBlockedPage() == _page;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       // Fondo oscuro → iconos de la barra de estado en claro.
@@ -180,9 +222,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           body: SafeArea(
             child: Column(
               children: [
-                // "Saltar" se oculta en el slide de ubicación mientras falte la
-                // ciudad; en los demás sin ciudad, al pulsarlo lleva a ese paso.
-                _TopBar(showSkip: !isLast && !locationRequired, onSkip: _onSkip),
+                _ProgressBar(current: _page, count: _pageCount),
+                _TopBar(showSkip: !isLast && !skipHidden, onSkip: _onSkip),
                 Expanded(
                   child: PageView(
                     controller: _pageController,
@@ -195,11 +236,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         selected: _language,
                         onSelect: _selectLanguage,
                       ),
-                      _AboutYouSlide(
+                      _NameSlide(
                         nameController: _nameController,
+                        showError: _nameError,
+                        onNameChanged: _onNameChanged,
+                        onSubmitted: _onContinue,
+                      ),
+                      _CitySlide(
                         selectedPlace: _selectedPlace,
                         showLocationHint: locationRequired,
-                        onNameChanged: _persistName,
                         onPlaceSelected: (place) =>
                             setState(() => _selectedPlace = place),
                       ),
@@ -208,13 +253,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ],
                   ),
                 ),
-                _PageIndicator(count: _pageCount, current: _page),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
                   child: SizedBox(
                     height: 54,
                     width: double.infinity,
-                    child: FilledButton(
+                    child: PressableScale.passive(child: FilledButton(
                       style: FilledButton.styleFrom(
                         backgroundColor: _gold,
                         // Texto oscuro sobre el dorado: ~8:1 de contraste
@@ -223,9 +267,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         disabledBackgroundColor: _gold.withValues(alpha: 0.30),
                         disabledForegroundColor:
                             const Color(0xFF241E10).withValues(alpha: 0.5),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
+                        shape: squircle(16),
                         textStyle: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -236,11 +278,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           ? null
                           : isLast
                               ? _finish
-                              : () => _goToPage(_page + 1),
+                              : _onContinue,
                       child: Text(
                         isLast ? t.t('common_start') : t.t('common_continue'),
                       ),
-                    ),
+                    )),
                   ),
                 ),
               ],
@@ -285,31 +327,31 @@ class _TopBar extends StatelessWidget {
   }
 }
 
-// --- Indicador de páginas ----------------------------------------------------
-class _PageIndicator extends StatelessWidget {
-  final int count;
+// --- Barra de progreso lineal ------------------------------------------------
+class _ProgressBar extends StatelessWidget {
   final int current;
+  final int count;
 
-  const _PageIndicator({required this.count, required this.current});
+  const _ProgressBar({required this.current, required this.count});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(count, (i) {
-        final active = i == current;
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 260),
-          curve: Curves.easeOut,
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          height: 8,
-          width: active ? 24 : 8,
-          decoration: BoxDecoration(
-            color: active ? _gold : _gold.withValues(alpha: 0.25),
-            borderRadius: BorderRadius.circular(4),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(end: (current + 1) / count),
+        duration: const Duration(milliseconds: 320),
+        curve: Curves.easeOutCubic,
+        builder: (context, value, _) => ClipRRect(
+          borderRadius: BorderRadius.circular(2),
+          child: LinearProgressIndicator(
+            value: value,
+            minHeight: 4,
+            color: _gold,
+            backgroundColor: _gold.withValues(alpha: 0.2),
           ),
-        );
-      }),
+        ),
+      ),
     );
   }
 }
@@ -436,11 +478,11 @@ class _ChoiceCard extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 160),
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: selected ? _gold : _line,
-              width: selected ? 2 : 1,
+          decoration: ShapeDecoration(
+            shape: RoundedSuperellipseBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(color: selected ? _gold : _line,
+                width: selected ? 2 : 1,),
             ),
           ),
           child: Row(
@@ -469,25 +511,55 @@ class _ChoiceCard extends StatelessWidget {
   }
 }
 
-// --- Slide 2: nombre + ubicación para el tiempo -------------------------
-class _AboutYouSlide extends StatelessWidget {
+// --- Slide 2: nombre (obligatorio) ---------------------------------------
+class _NameSlide extends StatelessWidget {
   final TextEditingController nameController;
+  final bool showError;
+  final ValueChanged<String> onNameChanged;
+  final VoidCallback onSubmitted;
+
+  const _NameSlide({
+    required this.nameController,
+    required this.showError,
+    required this.onNameChanged,
+    required this.onSubmitted,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
+    return _SlideShell(
+      icon: Icons.waving_hand_outlined,
+      title: t.t('onb_about_title'),
+      subtitle: t.t('onb_about_subtitle'),
+      child: _OnbTextField(
+        controller: nameController,
+        hintText: t.t('onb_your_name'),
+        icon: Icons.person_outline,
+        errorText: showError ? t.t('onb_name_required') : null,
+        textInputAction: TextInputAction.done,
+        onChanged: onNameChanged,
+        onSubmitted: (_) => onSubmitted(),
+      ),
+    );
+  }
+}
+
+// --- Slide 3: ciudad (solo mediante el mapa) -----------------------------
+class _CitySlide extends StatelessWidget {
   final PlaceResult? selectedPlace;
   final bool showLocationHint;
-  final ValueChanged<String> onNameChanged;
   final ValueChanged<PlaceResult> onPlaceSelected;
 
-  const _AboutYouSlide({
-    required this.nameController,
+  const _CitySlide({
     required this.selectedPlace,
     required this.showLocationHint,
-    required this.onNameChanged,
     required this.onPlaceSelected,
   });
 
   /// Abre el mapa interactivo para elegir la ubicación tocando un pin. El
-  /// [PlaceResult] resultante trae lat/lon ya resueltas: cuenta igual que
-  /// elegir una sugerencia del buscador para desbloquear el slide.
+  /// [PlaceResult] resultante trae lat/lon ya resueltas y es el único modo de
+  /// desbloquear este slide.
   Future<void> _pickOnMap(BuildContext context) async {
     final place = await MapLocationPicker.show(
       context,
@@ -497,82 +569,47 @@ class _AboutYouSlide extends StatelessWidget {
     if (place != null) onPlaceSelected(place);
   }
 
-  InputDecoration _fieldDecoration(String hint) => InputDecoration(
-        hintText: hint,
-        hintStyle: const TextStyle(color: _inkSoft),
-        prefixIcon: const Icon(Icons.search, color: _inkSoft),
-        filled: true,
-        fillColor: _card,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        enabledBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(14)),
-          borderSide: BorderSide(color: _line),
-        ),
-        focusedBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(14)),
-          borderSide: BorderSide(color: _gold, width: 1.6),
-        ),
-      );
-
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
+    final place = selectedPlace;
     return _SlideShell(
-      icon: Icons.waving_hand_outlined,
-      title: t.t('onb_about_title'),
-      subtitle: t.t('onb_about_subtitle'),
+      icon: Icons.location_on_outlined,
+      title: t.t('onb_city_title'),
+      subtitle: t.t('onb_city_subtitle'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _OnbTextField(
-            controller: nameController,
-            hintText: t.t('onb_your_name'),
-            icon: Icons.person_outline,
-            textInputAction: TextInputAction.next,
-            onChanged: onNameChanged,
-          ),
-          const SizedBox(height: 22),
-          Padding(
-            padding: const EdgeInsets.only(left: 4, bottom: 8),
-            child: Text(
-              t.t('onb_city_label'),
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: _inkSoft,
-              ),
-            ),
-          ),
-          CityAutocompleteField(
-            key: const ValueKey('onboarding-city-autocomplete'),
-            initialValue: selectedPlace,
-            decoration: _fieldDecoration(t.t('onb_city_hint')),
-            onSelected: onPlaceSelected,
-          ),
-          const SizedBox(height: 12),
-          OutlinedButton.icon(
+          PressableScale.passive(child: OutlinedButton.icon(
+            key: const ValueKey('onboarding-map-button'),
             onPressed: () => _pickOnMap(context),
             icon: const Icon(Icons.map_outlined, color: _gold),
-            label: Text(t.t('map_select_on_map')),
+            label: Text(
+              place == null
+                  ? t.t('map_select_on_map')
+                  : t.t('onb_city_change'),
+            ),
             style: OutlinedButton.styleFrom(
               foregroundColor: _ink,
               backgroundColor: _card,
-              side: const BorderSide(color: _line),
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
+              side: BorderSide(color: place == null ? _gold : _line),
+              padding: const EdgeInsets.symmetric(vertical: 18),
+              textStyle: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
               ),
+              shape: squircle(14),
             ),
-          ),
-          const SizedBox(height: 12),
-          if (selectedPlace != null)
+          )),
+          const SizedBox(height: 16),
+          if (place != null)
             Row(
               children: [
                 const Icon(Icons.check_circle, size: 16, color: _gold),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    t.t('onb_city_selected', {'city': selectedPlace!.displayName}),
+                    t.t('onb_city_selected', {'city': place.displayName}),
                     style: const TextStyle(
                         fontSize: 13, color: _ink, fontWeight: FontWeight.w600),
                   ),
@@ -606,21 +643,25 @@ class _AboutYouSlide extends StatelessWidget {
   }
 }
 
-/// Campo de texto con el estilo del onboarding (tarjeta blanca, borde dorado
-/// al enfocar).
+/// Campo de texto con el estilo del onboarding (tarjeta oscura, borde dorado
+/// al enfocar y rojo suave si [errorText] no es `null`).
 class _OnbTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final IconData icon;
+  final String? errorText;
   final TextInputAction textInputAction;
   final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
 
   const _OnbTextField({
     required this.controller,
     required this.hintText,
     required this.icon,
     required this.textInputAction,
+    this.errorText,
     this.onChanged,
+    this.onSubmitted,
   });
 
   @override
@@ -628,12 +669,15 @@ class _OnbTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       onChanged: onChanged,
+      onSubmitted: onSubmitted,
       textCapitalization: TextCapitalization.words,
       textInputAction: textInputAction,
       style: const TextStyle(color: _ink, fontSize: 16),
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: const TextStyle(color: _inkSoft),
+        errorText: errorText,
+        errorStyle: const TextStyle(color: _danger, fontSize: 13),
         prefixIcon: Icon(icon, color: _inkSoft),
         filled: true,
         fillColor: _card,
@@ -647,12 +691,20 @@ class _OnbTextField extends StatelessWidget {
           borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: _gold, width: 1.6),
         ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: _danger),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: _danger, width: 1.6),
+        ),
       ),
     );
   }
 }
 
-// --- Slide 3: organización del armario -----------------------------------
+// --- Slide 4: instrucciones (solo informativas, diseño plano) ------------
 class _OrganizationSlide extends StatelessWidget {
   const _OrganizationSlide();
 
@@ -666,19 +718,19 @@ class _OrganizationSlide extends StatelessWidget {
       child: Column(
         children: [
           _Step(
-            icon: Icons.add_a_photo_outlined,
+            number: 1,
             title: t.t('onb_org_step1_title'),
             text: t.t('onb_org_step1_text'),
           ),
-          const SizedBox(height: 14),
+          const _StepDivider(),
           _Step(
-            icon: Icons.category_outlined,
+            number: 2,
             title: t.t('onb_org_step2_title'),
             text: t.t('onb_org_step2_text'),
           ),
-          const SizedBox(height: 14),
+          const _StepDivider(),
           _Step(
-            icon: Icons.favorite_border,
+            number: 3,
             title: t.t('onb_org_step3_title'),
             text: t.t('onb_org_step3_text'),
           ),
@@ -688,35 +740,34 @@ class _OrganizationSlide extends StatelessWidget {
   }
 }
 
+/// Instrucción numerada puramente informativa: sin fondo, borde, sombra ni
+/// `InkWell`, para que no se lea como un botón ni como una tarjeta tocable.
 class _Step extends StatelessWidget {
-  final IconData icon;
+  final int number;
   final String title;
   final String text;
 
-  const _Step({required this.icon, required this.title, required this.text});
+  const _Step({required this.number, required this.title, required this.text});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: _card,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _line),
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 14),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: const Color(0x26CBA75D),
-              borderRadius: BorderRadius.circular(12),
+          SizedBox(
+            width: 32,
+            child: Text(
+              '$number',
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                color: _gold,
+                height: 1.1,
+              ),
             ),
-            child: Icon(icon, color: _gold, size: 22),
           ),
-          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -724,16 +775,16 @@ class _Step extends StatelessWidget {
                 Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 15,
+                    fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: _ink,
                   ),
                 ),
-                const SizedBox(height: 3),
+                const SizedBox(height: 4),
                 Text(
                   text,
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: 14,
                     color: _inkSoft,
                     height: 1.4,
                   ),
@@ -747,7 +798,15 @@ class _Step extends StatelessWidget {
   }
 }
 
-// --- Slide 4: bienvenida JUSTFIT ----------------------------------------
+class _StepDivider extends StatelessWidget {
+  const _StepDivider();
+
+  @override
+  Widget build(BuildContext context) =>
+      const Divider(height: 1, thickness: 0.5, color: _line);
+}
+
+// --- Slide 5: bienvenida JUSTFIT ----------------------------------------
 class _WelcomeSlide extends StatelessWidget {
   const _WelcomeSlide();
 

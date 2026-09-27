@@ -54,7 +54,7 @@ class _ShimmerBoxState extends State<ShimmerBox>
             ? Colors.white.withValues(alpha: 0.08)
             : Colors.white.withValues(alpha: 0.55));
 
-    return ClipRRect(
+    return ClipRSuperellipse(
       borderRadius: widget.borderRadius,
       child: AnimatedBuilder(
         animation: _controller,

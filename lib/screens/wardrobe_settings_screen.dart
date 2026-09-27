@@ -10,6 +10,7 @@ import '../providers/wardrobe_settings_provider.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/pressable_scale.dart';
 import 'onboarding_screen.dart';
+import '../theme/ios_design.dart';
 
 /// Estaciones de prenda que cubre cada preferencia de armario activo. Un
 /// conjunto vacío significa "no hay nada fuera de temporada".
@@ -34,8 +35,9 @@ class WardrobeSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Gestión de Armario')),
-      body: const SafeArea(child: _WardrobeSettingsBody()),
+      extendBodyBehindAppBar: true,
+      appBar: const GlassAppBar(title: Text('Gestión de Armario')),
+      body: const _WardrobeSettingsBody(),
     );
   }
 }
@@ -50,7 +52,12 @@ class _WardrobeSettingsBody extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+      padding: EdgeInsets.fromLTRB(
+        kPageMargin,
+        glassBodyTopPadding(context) + 8,
+        kPageMargin,
+        32 + MediaQuery.paddingOf(context).bottom,
+      ),
       children: [
         const _SectionTitle('Estilo y Preferencias de IA'),
         const SizedBox(height: 10),
@@ -190,14 +197,14 @@ class _SelectableChip extends StatelessWidget {
       haptic: PressHaptic.selection,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color: selected
               ? scheme.primary.withValues(alpha: 0.18)
               : Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(
-            color: selected ? scheme.primary : scheme.outlineVariant,
-            width: selected ? 1.4 : 1,
+          shape: RoundedSuperellipseBorder(
+            borderRadius: BorderRadius.circular(30),
+            side: BorderSide(color: selected ? scheme.primary : scheme.outlineVariant,
+              width: selected ? 1.4 : 1,),
           ),
         ),
         child: Text(
@@ -237,7 +244,7 @@ class _ReglaRow extends StatelessWidget {
               activeColor: scheme.primary,
               checkColor: scheme.onPrimary,
               side: BorderSide(color: scheme.onSurfaceVariant),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+              shape: squircle(4),
             ),
           ),
           const SizedBox(width: 10),
@@ -360,11 +367,11 @@ class _AdvancedActionsCard extends StatelessWidget {
   Future<void> _confirmClearWardrobe(BuildContext context) async {
     HapticFeedback.heavyImpact();
     final scheme = Theme.of(context).colorScheme;
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showSoftDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
         backgroundColor: scheme.surfaceContainerHighest,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: squircle(20),
         title: Text('¿Vaciar el armario?', style: TextStyle(color: scheme.onSurface)),
         content: Text(
           'Se eliminarán todas las prendas guardadas de forma permanente. '
@@ -376,11 +383,11 @@ class _AdvancedActionsCard extends StatelessWidget {
             onPressed: () => Navigator.of(dialogContext).pop(false),
             child: Text('Cancelar', style: TextStyle(color: scheme.onSurfaceVariant)),
           ),
-          FilledButton(
+          PressableScale.passive(child: FilledButton(
             style: FilledButton.styleFrom(backgroundColor: scheme.error, foregroundColor: scheme.onError),
             onPressed: () => Navigator.of(dialogContext).pop(true),
             child: const Text('Vaciar armario'),
-          ),
+          )),
         ],
       ),
     );
@@ -470,10 +477,12 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 16),
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color: danger ? scheme.error.withValues(alpha: 0.12) : scheme.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: danger ? scheme.error.withValues(alpha: 0.5) : scheme.outlineVariant),
+          shape: RoundedSuperellipseBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: danger ? scheme.error.withValues(alpha: 0.5) : scheme.outlineVariant),
+          ),
         ),
         child: Row(
           children: [

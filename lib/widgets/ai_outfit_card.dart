@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../services/outfit_recommendation_service.dart';
 import 'outfit_flat_lay_view.dart';
+import '../theme/ios_design.dart';
 
 /// Tarjeta que muestra una combinación de outfit sugerida por el motor de
 /// reglas local
@@ -28,7 +29,7 @@ class AiOutfitCard extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final card = Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: squircle(16),
       clipBehavior: Clip.antiAlias,
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -55,7 +56,7 @@ class AiOutfitCard extends StatelessWidget {
                 children: [
                   for (final garment in outfit.garments) ...[
                     Expanded(
-                      child: ClipRRect(
+                      child: ClipRSuperellipse(
                         borderRadius: BorderRadius.circular(16),
                         child: Container(
                           color: scheme.surfaceContainerHighest,

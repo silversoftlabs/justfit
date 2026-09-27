@@ -26,6 +26,7 @@ import '../services/image_enhancer.dart';
 import '../services/image_storage.dart';
 import '../services/u2net_segmentation_service.dart';
 import '../theme/app_palette.dart';
+import '../theme/ios_design.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/garment_image.dart';
 import '../widgets/pressable_scale.dart';
@@ -323,11 +324,8 @@ class _AddGarmentScreenState extends State<AddGarmentScreen> with WidgetsBinding
   }
 
   Future<void> _pickImage() async {
-    final source = await showModalBottomSheet<ImageSource>(
+    final source = await showGlassSheet<ImageSource>(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
       builder: (context) => SafeArea(
         child: Wrap(
           children: [
@@ -754,11 +752,8 @@ class _AddGarmentScreenState extends State<AddGarmentScreen> with WidgetsBinding
     required T? current,
     required String Function(T) labelOf,
   }) {
-    return showModalBottomSheet<T>(
+    return showGlassSheet<T>(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
       builder: (context) => SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
@@ -813,12 +808,9 @@ class _AddGarmentScreenState extends State<AddGarmentScreen> with WidgetsBinding
   /// [_showOptionPicker], necesita casi toda la altura de la pantalla para
   /// el grid, así que usa `DraggableScrollableSheet` en vez de un `Wrap`.
   Future<void> _editTipoPrenda() async {
-    final result = await showModalBottomSheet<TipoPrenda>(
+    final result = await showGlassSheet<TipoPrenda>(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
       builder: (context) => DraggableScrollableSheet(
         expand: false,
         initialChildSize: 0.85,
@@ -865,9 +857,15 @@ class _AddGarmentScreenState extends State<AddGarmentScreen> with WidgetsBinding
     final hasImage = _pickedImagePath != null;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Añadir prenda')),
+      extendBodyBehindAppBar: true,
+      appBar: const GlassAppBar(title: Text('Añadir prenda')),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.fromLTRB(
+          kPageMargin,
+          glassBodyTopPadding(context) + 12,
+          kPageMargin,
+          24 + MediaQuery.paddingOf(context).bottom,
+        ),
         children: [
           _ImagePickerCard(
             imagePath: _pickedImagePath,
@@ -899,7 +897,7 @@ class _AddGarmentScreenState extends State<AddGarmentScreen> with WidgetsBinding
           const SizedBox(height: 32),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
+            child: PressableScale.passive(child: ElevatedButton.icon(
               onPressed:
                   (_saving || _processingImage || _missingUserFields) ? null : _save,
               icon: _saving
@@ -916,7 +914,7 @@ class _AddGarmentScreenState extends State<AddGarmentScreen> with WidgetsBinding
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
-            ),
+            )),
           ),
           // Un botón deshabilitado sin explicación se lee como un fallo de la
           // app; este aviso nombra exactamente lo que falta por elegir.
@@ -1102,10 +1100,12 @@ class _AutoDetectedCard extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: palette.cardBeige,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: cardHairlineColor(context)),
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: cardHairlineColor(context)),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1237,12 +1237,12 @@ class _UserFieldsCard extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: palette.cardBeige,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: complete ? cardHairlineColor(context) : accent.withValues(alpha: 0.55),
-          width: complete ? 1 : 1.4,
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: complete ? cardHairlineColor(context) : accent.withValues(alpha: 0.55),
+            width: complete ? 1 : 1.4,),
         ),
       ),
       child: Column(
@@ -1402,10 +1402,12 @@ class _TipoPrendaField extends StatelessWidget {
       onTap: onTap,
       haptic: PressHaptic.selection,
       child: DecoratedBox(
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color: palette.chipBeige,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: palette.chipBeigeBorder),
+          shape: RoundedSuperellipseBorder(
+            borderRadius: BorderRadius.circular(14),
+            side: BorderSide(color: palette.chipBeigeBorder),
+          ),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -1455,10 +1457,12 @@ class _EditableAiChip extends StatelessWidget {
       onTap: onTap,
       haptic: PressHaptic.selection,
       child: DecoratedBox(
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color: palette.chipBeige,
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: palette.chipBeigeBorder),
+          shape: RoundedSuperellipseBorder(
+            borderRadius: BorderRadius.circular(30),
+            side: BorderSide(color: palette.chipBeigeBorder),
+          ),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
@@ -1509,10 +1513,12 @@ class _FavoriteChip extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color: isFavorite ? palette.favoritePinkBg : palette.chipBeige,
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: isFavorite ? palette.favoritePinkBg : palette.chipBeigeBorder),
+          shape: RoundedSuperellipseBorder(
+            borderRadius: BorderRadius.circular(30),
+            side: BorderSide(color: isFavorite ? palette.favoritePinkBg : palette.chipBeigeBorder),
+          ),
         ),
         child: Text(
           'Favorita',
@@ -1540,9 +1546,11 @@ class _StyleTipCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: palette.cardBeige.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(16),
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
       ),
       child: Column(
         children: [
@@ -1608,12 +1616,12 @@ class _ImagePickerCard extends StatelessWidget {
       enableHaptics: false,
       child: Container(
         height: 280,
-        decoration: BoxDecoration(
-          borderRadius: radius,
+        decoration: ShapeDecoration(
           color: scheme.surfaceContainerHighest,
-          border: Border.all(
-            color: hasImage ? Colors.transparent : scheme.outline,
-            width: 1.4,
+          shape: RoundedSuperellipseBorder(
+            borderRadius: radius,
+            side: BorderSide(color: hasImage ? Colors.transparent : scheme.outline,
+              width: 1.4,),
           ),
         ),
         clipBehavior: Clip.antiAlias,
@@ -1692,9 +1700,11 @@ class _ImagePickerCard extends StatelessWidget {
                                 horizontal: 16,
                                 vertical: 9,
                               ),
-                              decoration: BoxDecoration(
+                              decoration: ShapeDecoration(
                                 color: Colors.white.withValues(alpha: 0.92),
-                                borderRadius: BorderRadius.circular(30),
+                                shape: RoundedSuperellipseBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
                               ),
                               // Este pill flota sobre la foto de la prenda con un
                               // fondo casi blanco fijo (para seguir siendo legible

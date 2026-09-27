@@ -3,7 +3,7 @@
     "allow": [
       "Bash(flutter analyze *)",
       "Bash(flutter build *)",
-      "Bash(curl -s \"https://generativelanguage.googleapis.com/v1beta/models?key=AIzaSyDWnQPmPRFh_oMHWIRuVo-DJq-Y7gCHcmo\")",
+      "Bash(curl -s \"https://generativelanguage.googleapis.com/v1beta/models?key=AiZaSyDWnQPMPrFh_OMHWiRuVo-DJq-Y7gCHcmo\")",
       "Bash(curl *)",
       "Bash(graphify query *)",
       "WebFetch(domain:pub.dev)",
@@ -14,7 +14,7 @@
       "WebFetch(domain:medium.com)",
       "Read(//tmp/**)",
       "Bash(mkdir -p \"/c/Users/table/AppData/Local/Temp/claude/C--Users-table-Desktop-armario-virtual/cbf384df-2865-4209-b3e6-c928ebcb0b78/scratchpad\")",
-      "Bash(cp /tmp/fg_readme2.md \"/c/Users/table/AppData/Local/Temp/claude/C--Users-table-Desktop-armario-virtual/cbf384df-2865-4209-b3e6-c928ebcb0b78/scratchpad/fg_readme.md\")",
+      "Bash(cp /tmp/fg_readme.2.md \"/c/Users/table/AppData/Local/Temp/claude/C--Users-table-Desktop-armario-virtual/cbf384df-2865-4209-b3e6-c928ebcb0b78/scratchpad/fg_readme.md\")",
       "Bash(cp /tmp/fgmp_readme.md \"/c/Users/table/AppData/Local/Temp/claude/C--Users-table-Desktop-armario-virtual/cbf384df-2865-4209-b3e6-c928ebcb0b78/scratchpad/fgmp_readme.md\")",
       "Read(//c/Users/table/AppData/Local/Temp/claude/C--Users-table-Desktop-armario-virtual/cbf384df-2865-4209-b3e6-c928ebcb0b78/scratchpad/**)",
       "Bash(xargs grep -l \"class ModelResponse\")",
@@ -25,8 +25,8 @@
       "Bash(flutter devices *)",
       "Bash(flutter run *)",
       "Bash(npx --yes playwright --version)",
-      "Bash(node -e ' *)",
-      "Bash(mkdir -p C:/Users/table/AppData/Local/Temp/claude/C--Users-table-Desktop-armario-virtual/d082a1cd-fbb1-4818-ae95-2ee5baa8b25a/scratchpad/pw)",
+      "Bash(node -e ' *')",
+      "Bash(mkdir -p C:/Users/table/AppData/Local/Temp/claude/C--Users-table-Desktop-armario-virtual/d082a1cd-fbb1-4818-ae95-2ee5baa1bb25a/scratchpad)",
       "Bash(npm init *)",
       "Bash(npm install *)",
       "Bash(npx playwright *)",
@@ -35,7 +35,20 @@
       "Bash(flutter *)",
       "Bash(python -c \"import onnx; print\\(onnx.__version__\\)\")",
       "Bash(cd *)",
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *')"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "puppeteer"
+  ],
+  "mcpServers": {
+    "puppeteer": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-puppeteer"
+      ]
+    }
+  },
+  "enableAllProjectMcpServers": true
 }

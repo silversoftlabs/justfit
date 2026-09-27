@@ -63,25 +63,58 @@ void main() {
   });
 
   testWidgets(
-    'la ubicación es obligatoria: "Continuar" se desactiva en el slide de ciudad '
-    'hasta elegir una',
+    'el nombre es obligatorio: "Continuar" con el campo vacío muestra el error '
+    'y no avanza',
+    (tester) async {
+      await _pumpOnboarding(tester);
+      await tester.tap(find.widgetWithText(FilledButton, 'Continuar'));
+      await tester.pumpAndSettle();
+      expect(_currentPage(tester), 1);
+      expect(find.text('Escribe tu nombre para continuar.'), findsNothing);
+
+      // Vacío (y solo espacios) → error y sigue en el slide del nombre.
+      await tester.enterText(find.byType(TextField), '   ');
+      await tester.tap(find.widgetWithText(FilledButton, 'Continuar'));
+      await tester.pumpAndSettle();
+      expect(_currentPage(tester), 1);
+      expect(find.text('Escribe tu nombre para continuar.'), findsOneWidget);
+
+      // Al escribir un nombre el error desaparece y se puede avanzar.
+      await tester.enterText(find.byType(TextField), 'Lucía');
+      await tester.pumpAndSettle();
+      expect(find.text('Escribe tu nombre para continuar.'), findsNothing);
+      await tester.tap(find.widgetWithText(FilledButton, 'Continuar'));
+      await tester.pumpAndSettle();
+      expect(_currentPage(tester), 2);
+
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'la ciudad solo se elige en el mapa: sin campo de texto y "Continuar" '
+    'desactivado hasta elegir una',
     (tester) async {
       await _pumpOnboarding(tester);
 
       // Slide 0 (idioma): "Continuar" está habilitado (hay idioma por defecto).
       expect(_continueButton(tester, 'Continuar').onPressed, isNotNull);
 
-      // Avanza al slide 1 (nombre + ciudad).
+      // Slide 1 (nombre) y, con nombre, slide 2 (ciudad).
+      await tester.tap(find.widgetWithText(FilledButton, 'Continuar'));
+      await tester.pumpAndSettle();
+      expect(find.text('¡Hola! ¿Cómo te llamas?'), findsOneWidget);
+      await tester.enterText(find.byType(TextField), 'Lucía');
       await tester.tap(find.widgetWithText(FilledButton, 'Continuar'));
       await tester.pumpAndSettle();
 
-      // Estamos en el slide de "Sobre ti".
-      expect(find.text('¡Hola! ¿Cómo te llamas?'), findsOneWidget);
+      expect(find.text('¿En qué ciudad estás?'), findsOneWidget);
+      expect(find.byType(TextField), findsNothing);
       expect(
-        find.byKey(const ValueKey('onboarding-city-autocomplete')),
+        find.byKey(const ValueKey('onboarding-map-button')),
         findsOneWidget,
       );
-      expect(find.textContaining('Elige tu ciudad'), findsOneWidget);
+      expect(find.textContaining('Elige tu ciudad en el mapa'), findsOneWidget);
 
       // ...y "Continuar" queda deshabilitado mientras no haya ciudad elegida.
       expect(
@@ -95,30 +128,47 @@ void main() {
   );
 
   testWidgets(
-    'sin ciudad: arrastrar hacia delante devuelve al slide de ubicación; '
-    'hacia atrás sí navega',
+    'sin nombre ni ciudad: arrastrar hacia delante devuelve al primer slide '
+    'obligatorio; hacia atrás sí navega',
     (tester) async {
       await _pumpOnboarding(tester);
       expect(_currentPage(tester), 0);
 
-      // Avanza al slide 1 (nombre + ciudad) con el botón.
+      // Avanza al slide 1 (nombre) con el botón.
       await tester.tap(find.widgetWithText(FilledButton, 'Continuar'));
       await tester.pumpAndSettle();
       expect(_currentPage(tester), 1);
       expect(find.text('¡Hola! ¿Cómo te llamas?'), findsOneWidget);
 
-      // Fling hacia delante sin ciudad: el PageView puede llegar a moverse,
-      // pero termina devuelto y 100 % alineado al slide de ubicación.
+      // Fling hacia delante sin nombre: termina devuelto y 100 % alineado al
+      // slide del nombre, con el error visible.
       await tester.fling(find.byType(PageView), const Offset(-400, 0), 1200);
       await tester.pumpAndSettle();
       expect(
         _currentPage(tester),
         1,
+        reason: 'sin nombre no se puede pasar del slide del nombre',
+      );
+      expect(find.text('Escribe tu nombre para continuar.'), findsOneWidget);
+
+      // Con nombre pero sin ciudad, el límite pasa a ser el slide de ubicación.
+      await tester.enterText(find.byType(TextField), 'Lucía');
+      await tester.tap(find.widgetWithText(FilledButton, 'Continuar'));
+      await tester.pumpAndSettle();
+      expect(_currentPage(tester), 2);
+      await tester.fling(find.byType(PageView), const Offset(-400, 0), 1200);
+      await tester.pumpAndSettle();
+      expect(
+        _currentPage(tester),
+        2,
         reason: 'sin ciudad no se puede pasar del slide de ubicación',
       );
       expect(_continueButton(tester, 'Continuar').onPressed, isNull);
 
-      // Hacia atrás sí se puede volver al slide de idioma.
+      // Hacia atrás sí se puede volver hasta el slide de idioma.
+      await tester.fling(find.byType(PageView), const Offset(400, 0), 1200);
+      await tester.pumpAndSettle();
+      expect(_currentPage(tester), 1);
       await tester.fling(find.byType(PageView), const Offset(400, 0), 1200);
       await tester.pumpAndSettle();
       expect(_currentPage(tester), 0);
@@ -129,7 +179,7 @@ void main() {
   );
 
   testWidgets(
-    '«Saltar» sin ciudad válida lleva al slide de ubicación en vez de terminar',
+    '«Saltar» sin nombre o sin ciudad lleva a ese slide en vez de terminar',
     (tester) async {
       var finished = false;
       await _pumpOnboarding(tester, onFinished: () => finished = true);
@@ -141,11 +191,20 @@ void main() {
       await tester.tap(skip);
       await tester.pumpAndSettle();
 
-      expect(finished, isFalse, reason: 'no se puede saltar el onboarding sin ciudad');
+      expect(finished, isFalse, reason: 'no se puede saltar el onboarding sin nombre');
       expect(_currentPage(tester), 1);
       expect(find.text('¡Hola! ¿Cómo te llamas?'), findsOneWidget);
 
-      // Y en el propio slide de ubicación, "Saltar" queda desactivado.
+      // Y en el propio slide del nombre, "Saltar" queda desactivado.
+      expect(tester.widget<TextButton>(skip).onPressed, isNull);
+
+      // Con nombre, "Saltar" lleva al slide de la ciudad y allí se desactiva.
+      await tester.enterText(find.byType(TextField), 'Lucía');
+      await tester.pumpAndSettle();
+      await tester.tap(skip);
+      await tester.pumpAndSettle();
+      expect(finished, isFalse, reason: 'no se puede saltar el onboarding sin ciudad');
+      expect(_currentPage(tester), 2);
       expect(tester.widget<TextButton>(skip).onPressed, isNull);
 
       expect(tester.takeException(), isNull);

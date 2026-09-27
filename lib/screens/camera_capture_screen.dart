@@ -309,18 +309,18 @@ class _CameraError extends StatelessWidget {
               runSpacing: 12,
               alignment: WrapAlignment.center,
               children: [
-                OutlinedButton(
+                PressableScale.passive(child: OutlinedButton(
                   onPressed: () => Navigator.of(context).pop(),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.white,
                     side: const BorderSide(color: Colors.white54),
                   ),
                   child: const Text('Volver'),
-                ),
-                FilledButton(
+                )),
+                PressableScale.passive(child: FilledButton(
                   onPressed: onRetry,
                   child: const Text('Reintentar'),
-                ),
+                )),
               ],
             ),
           ],

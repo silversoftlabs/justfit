@@ -17,7 +17,12 @@ class VersatilityBadge extends StatelessWidget {
         : (scheme.surfaceContainerHighest, scheme.onSurfaceVariant);
 
     return DecoratedBox(
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(30)),
+      decoration: ShapeDecoration(
+        color: bg,
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         child: Row(

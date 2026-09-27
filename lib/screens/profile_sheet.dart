@@ -16,6 +16,7 @@ import '../widgets/city_autocomplete_field.dart';
 import '../widgets/map_location_picker.dart';
 import '../widgets/pressable_scale.dart';
 import 'wardrobe_settings_screen.dart';
+import '../theme/ios_design.dart';
 
 /// Bottom sheet de "Perfil y Configuración", abierto al tocar el avatar del
 /// header en `home_screen.dart`.
@@ -24,10 +25,10 @@ class ProfileSheet extends StatelessWidget {
 
   static Future<void> show(BuildContext context) {
     HapticFeedback.lightImpact();
-    return showModalBottomSheet(
+    return showGlassSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      wrap: false,
       builder: (_) => const ProfileSheet(),
     );
   }
@@ -42,10 +43,10 @@ class ProfileSheet extends StatelessWidget {
     final messenger = ScaffoldMessenger.of(context);
     final t = AppLocalizations.of(context);
 
-    final picked = await showModalBottomSheet<PlaceResult>(
+    final picked = await showGlassSheet<PlaceResult>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      wrap: false,
       builder: (sheetContext) => Padding(
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
@@ -74,9 +75,9 @@ class ProfileSheet extends StatelessWidget {
   Future<void> _editLanguage(BuildContext context) async {
     HapticFeedback.selectionClick();
     final localeProvider = context.read<LocaleProvider>();
-    final code = await showModalBottomSheet<String>(
+    final code = await showGlassSheet<String>(
       context: context,
-      backgroundColor: Colors.transparent,
+      wrap: false,
       builder: (_) => _LanguagePickerSheet(current: localeProvider.languageCode),
     );
     if (code != null) await localeProvider.setLanguage(code);
@@ -100,11 +101,10 @@ class ProfileSheet extends StatelessWidget {
         ? '${(minutesSaved / 60).toStringAsFixed(1)}h'
         : '$minutesSaved min';
 
-    return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+    return GlassSheetSurface(
+      showHandle: false,
       child: Container(
         constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
-        color: Theme.of(context).scaffoldBackgroundColor,
         child: SafeArea(
           top: false,
           child: SingleChildScrollView(
@@ -117,9 +117,11 @@ class ProfileSheet extends StatelessWidget {
                     width: 40,
                     height: 4,
                     margin: const EdgeInsets.only(bottom: 20),
-                    decoration: BoxDecoration(
+                    decoration: ShapeDecoration(
                       color: scheme.outlineVariant,
-                      borderRadius: BorderRadius.circular(2),
+                      shape: RoundedSuperellipseBorder(
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
                   ),
                 ),
@@ -236,7 +238,7 @@ class _ProfileHeaderState extends State<_ProfileHeader> {
   Future<void> _editName(BuildContext context, String currentName) async {
     HapticFeedback.lightImpact();
     final profile = context.read<UserProfileProvider>();
-    await showDialog<void>(
+    await showSoftDialog<void>(
       context: context,
       builder: (_) => _EditNameDialog(initialName: currentName, profile: profile),
     );
@@ -284,9 +286,11 @@ class _ProfileHeaderState extends State<_ProfileHeader> {
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-          decoration: BoxDecoration(
+          decoration: ShapeDecoration(
             color: scheme.secondary.withValues(alpha: 0.14),
-            borderRadius: BorderRadius.circular(30),
+            shape: RoundedSuperellipseBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -356,7 +360,7 @@ class _EditNameDialogState extends State<_EditNameDialog> {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
     return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: squircle(20),
       title: Text(t.t('profile_edit_name')),
       content: TextField(
         controller: _controller,
@@ -370,10 +374,10 @@ class _EditNameDialogState extends State<_EditNameDialog> {
           onPressed: () => Navigator.of(context).pop(),
           child: Text(t.t('common_cancel')),
         ),
-        FilledButton(
+        PressableScale.passive(child: FilledButton(
           onPressed: _save,
           child: Text(t.t('common_save')),
-        ),
+        )),
       ],
     );
   }
@@ -396,9 +400,11 @@ class _StatsCard extends StatelessWidget {
     final t = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 18),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: scheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(18),
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(18),
+        ),
       ),
       child: Row(
         children: [
@@ -610,10 +616,9 @@ class _LocationPickerSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final t = AppLocalizations.of(context);
-    return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+    return GlassSheetSurface(
+      showHandle: false,
       child: Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
         padding: EdgeInsets.fromLTRB(
           24,
           14,
@@ -629,9 +634,11 @@ class _LocationPickerSheet extends StatelessWidget {
                 width: 40,
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 18),
-                decoration: BoxDecoration(
+                decoration: ShapeDecoration(
                   color: scheme.outlineVariant,
-                  borderRadius: BorderRadius.circular(2),
+                  shape: RoundedSuperellipseBorder(
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
               ),
             ),
@@ -666,7 +673,7 @@ class _LocationPickerSheet extends StatelessWidget {
               style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
             ),
             const SizedBox(height: 8),
-            OutlinedButton.icon(
+            PressableScale.passive(child: OutlinedButton.icon(
               onPressed: () => _openMap(context),
               icon: const Icon(Icons.map_outlined),
               label: Text(t.t('map_select_on_map')),
@@ -674,11 +681,9 @@ class _LocationPickerSheet extends StatelessWidget {
                 foregroundColor: scheme.onSurface,
                 side: BorderSide(color: scheme.outlineVariant),
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
+                shape: squircle(14),
               ),
-            ),
+            )),
           ],
         ),
       ),
@@ -710,10 +715,9 @@ class _LanguagePickerSheet extends StatelessWidget {
       );
     }
 
-    return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+    return GlassSheetSurface(
+      showHandle: false,
       child: Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -722,9 +726,11 @@ class _LanguagePickerSheet extends StatelessWidget {
               width: 40,
               height: 4,
               margin: const EdgeInsets.symmetric(vertical: 14),
-              decoration: BoxDecoration(
+              decoration: ShapeDecoration(
                 color: scheme.outlineVariant,
-                borderRadius: BorderRadius.circular(2),
+                shape: RoundedSuperellipseBorder(
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
             Padding(

@@ -416,13 +416,7 @@ class _StaggeredFootwearPair extends StatelessWidget {
                   child: Container(
                     width: geometry.shadowWidth,
                     height: geometry.shadowHeight,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.elliptical(
-                          geometry.shadowWidth / 2,
-                          geometry.shadowHeight / 2,
-                        ),
-                      ),
+                    decoration: ShapeDecoration(
                       gradient: RadialGradient(
                         colors: [
                           shadowColor.withValues(
@@ -430,6 +424,14 @@ class _StaggeredFootwearPair extends StatelessWidget {
                           ),
                           shadowColor.withValues(alpha: 0),
                         ],
+                      ),
+                      shape: RoundedSuperellipseBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.elliptical(
+                            geometry.shadowWidth / 2,
+                            geometry.shadowHeight / 2,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -511,6 +513,9 @@ class AutocroppedGarment extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder<Uint8List>(
       future: GarmentAutocropCache.cropped(imagePath),
+      // Si ya estaba recortada, se pinta desde el primer fotograma (sin el
+      // hueco en blanco de un `FutureBuilder` recién montado).
+      initialData: GarmentAutocropCache.croppedIfReady(imagePath),
       builder: (context, snapshot) {
         final bytes = snapshot.data;
         if (bytes != null) {
@@ -1027,13 +1032,7 @@ class _CollageBody extends StatelessWidget {
                   child: placement.bytes == null
                       ? IgnorePointer(
                           child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.elliptical(
-                                  placement.width / 2,
-                                  placement.height / 2,
-                                ),
-                              ),
+                            decoration: ShapeDecoration(
                               gradient: RadialGradient(
                                 colors: [
                                   shadowColor.withValues(
@@ -1041,6 +1040,14 @@ class _CollageBody extends StatelessWidget {
                                   ),
                                   shadowColor.withValues(alpha: 0),
                                 ],
+                              ),
+                              shape: RoundedSuperellipseBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.elliptical(
+                                    placement.width / 2,
+                                    placement.height / 2,
+                                  ),
+                                ),
                               ),
                             ),
                           ),

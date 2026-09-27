@@ -21,6 +21,8 @@ import '../theme/app_palette.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/outfit_flat_lay_view.dart';
 import '../widgets/shimmer_box.dart';
+import '../theme/ios_design.dart';
+import '../widgets/pressable_scale.dart';
 
 /// Mismo mapeo ocasión→estilo que usa `OutfitMatchingService` internamente
 /// (`_targetStyle`, privado y solo usado ahí como bonus de puntuación, nunca
@@ -540,7 +542,10 @@ class _DailyOutfitScreenState extends State<DailyOutfitScreen> {
     final location = context.watch<LocationProvider>();
 
     return Scaffold(
+      // Transparente: deja ver el `AmbientBackdrop` de `MainNavigation`.
+      backgroundColor: Colors.transparent,
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             Padding(
@@ -550,9 +555,9 @@ class _DailyOutfitScreenState extends State<DailyOutfitScreen> {
                 child: Text(
                   t.t('daily_title'),
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 34,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 0.1,
+                    letterSpacing: -0.6,
                     color: scheme.onSurface,
                   ),
                 ),
@@ -560,7 +565,12 @@ class _DailyOutfitScreenState extends State<DailyOutfitScreen> {
             ),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+                padding: EdgeInsets.fromLTRB(
+                  kPageMargin,
+                  12,
+                  kPageMargin,
+                  24 + MediaQuery.paddingOf(context).bottom,
+                ),
                 children: [
                   // Con el tiempo ya cargado (`location.weather != null`), esta
                   // tarjeta se omite: la temperatura pasa a mostrarse dentro
@@ -668,7 +678,7 @@ class _DailyOutfitScreenState extends State<DailyOutfitScreen> {
                   SizedBox(
                     width: double.infinity,
                     height: 52,
-                    child: FilledButton(
+                    child: PressableScale.passive(child: FilledButton(
                       onPressed: (location.weather == null || _outfitLoading)
                           ? null
                           : () {
@@ -677,7 +687,7 @@ class _DailyOutfitScreenState extends State<DailyOutfitScreen> {
                             },
                       style: FilledButton.styleFrom(
                         backgroundColor: scheme.primary,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        shape: squircle(16),
                       ),
                       child: Text(
                         t.t('daily_generate_new'),
@@ -687,7 +697,7 @@ class _DailyOutfitScreenState extends State<DailyOutfitScreen> {
                           fontSize: 16,
                         ),
                       ),
-                    ),
+                    )),
                   ),
                 ],
               ),
@@ -757,11 +767,13 @@ class _WeatherCard extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: palette.cardBeige,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: cardHairlineColor(context)),
-        boxShadow: cardElevation(context, strength: 0.6),
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: cardHairlineColor(context)),
+        ),
+        shadows: cardElevation(context, strength: 0.6),
       ),
       child: _content(context, palette, scheme),
     );
@@ -948,11 +960,13 @@ class DailyOutfitFlatLayCard extends StatelessWidget {
       // `palette.cardBeige` de cada tarjeta interior: si ambos compartieran
       // color, las tarjetas de prenda del mosaico se fundirían con el
       // contenedor y perderían su efecto de "tarjeta individual".
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: palette.garmentPhotoBackground,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: cardHairlineColor(context)),
-        boxShadow: cardElevation(context, strength: 0.6),
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: cardHairlineColor(context)),
+        ),
+        shadows: cardElevation(context, strength: 0.6),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1072,9 +1086,11 @@ class _WeatherBadge extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
 
     return DecoratedBox(
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: palette.chipBeige,
-        borderRadius: BorderRadius.circular(20),
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -1136,12 +1152,12 @@ class _FlatLayGarmentTile extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: palette.cardBeige,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: highlighted ? scheme.primary : cardHairlineColor(context),
-          width: highlighted ? 2.5 : 1,
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: highlighted ? scheme.primary : cardHairlineColor(context),
+            width: highlighted ? 2.5 : 1,),
         ),
       ),
       padding: const EdgeInsets.all(4),
@@ -1155,7 +1171,7 @@ class _LoadingOutfitCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ClipRRect(
+    return const ClipRSuperellipse(
       borderRadius: BorderRadius.all(Radius.circular(20)),
       child: SizedBox(height: 320, child: ShimmerBox(borderRadius: BorderRadius.zero)),
     );
@@ -1186,11 +1202,11 @@ class _MessageCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: isError ? scheme.error.withValues(alpha: 0.08) : palette.cardBeige,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isError ? scheme.error.withValues(alpha: 0.25) : cardHairlineColor(context),
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: isError ? scheme.error.withValues(alpha: 0.25) : cardHairlineColor(context),),
         ),
       ),
       child: Column(

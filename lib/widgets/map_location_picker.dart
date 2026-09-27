@@ -8,6 +8,7 @@ import '../l10n/app_localizations.dart';
 import '../services/place_search_service.dart';
 import '../services/weather_service.dart';
 import '../theme/app_palette.dart';
+import '../theme/ios_design.dart';
 
 /// Pantalla a pantalla completa para elegir la ubicación del tiempo sobre un
 /// mapa interactivo, sin escribir nada y **sin pedir permisos de GPS**: el
@@ -88,7 +89,7 @@ const _chromeSurface = Color(0xFF171717); // AppBar — neutral-900
 const _cardSurface = Color(0xFF1E1E1E); // tarjeta flotante — modal oscuro
 const _cardBorder = Color(0xFF333333);
 const _onDark = Color(0xFFF9F8F6);
-const _onDarkMuted = Color(0xFFA0AEC0);
+const _onDarkMuted = Color(0xFFA8A49E);
 const _pinColor = Color(0xFFFF5A5F);
 
 class _MapLocationPickerState extends State<MapLocationPicker> {
@@ -289,9 +290,11 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                   margin: const EdgeInsets.only(bottom: 4, right: 4),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
+                  decoration: ShapeDecoration(
                     color: Colors.black.withValues(alpha: 0.55),
-                    borderRadius: BorderRadius.circular(6),
+                    shape: RoundedSuperellipseBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
                   ),
                   child: const Text(
                     '© OpenStreetMap',
@@ -335,11 +338,13 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                   Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 18, vertical: 16),
-                    decoration: BoxDecoration(
+                    decoration: ShapeDecoration(
                       color: _cardSurface,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: _cardBorder),
-                      boxShadow: [
+                      shape: RoundedSuperellipseBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        side: BorderSide(color: _cardBorder),
+                      ),
+                      shadows: [
                         BoxShadow(
                           color: Colors.black.withValues(alpha: 0.45),
                           blurRadius: 24,
@@ -397,9 +402,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                             AppColors.primary.withValues(alpha: 0.5),
                         disabledForegroundColor:
                             Colors.white.withValues(alpha: 0.7),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
+                        shape: squircle(16),
                       ),
                       icon: _resolving
                           ? const SizedBox(

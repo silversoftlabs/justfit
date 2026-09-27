@@ -133,14 +133,14 @@ class _TipoPrendaCard extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color: activa
               ? scheme.primary.withValues(alpha: 0.12)
               : palette.chipBeige,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: activa ? scheme.primary : palette.chipBeigeBorder,
-            width: activa ? 2 : 1,
+          shape: RoundedSuperellipseBorder(
+            borderRadius: BorderRadius.circular(14),
+            side: BorderSide(color: activa ? scheme.primary : palette.chipBeigeBorder,
+              width: activa ? 2 : 1,),
           ),
         ),
         child: Column(

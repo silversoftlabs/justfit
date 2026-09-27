@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../theme/ios_design.dart';
+
 enum AppSnackBarType { success, warning, error }
 
 /// SnackBar flotante y personalizada con icono y color según el tipo de
@@ -23,11 +25,12 @@ enum AppSnackBarType { success, warning, error }
 /// invisible (fondo transparente, sin elevación) y el fondo/borde/sombra de
 /// la píldora los pinta un `Container` propio dentro de `content`, alineado
 /// a la izquierda (`Alignment.centerLeft`) y con el ancho fijo que deja
-/// libre el FAB — así el hueco vacío a su derecha, dentro del `SnackBar`
-/// invisible, nunca intercepta toques: al pasar `margin`,
-/// `Dismissible` (el gesto de deslizar para descartar que envuelve el
-/// SnackBar) usa `HitTestBehavior.deferToChild` en vez de `opaque`, así que
-/// solo responde donde de verdad hay algo pintado.
+/// libre el FAB. El `margin` derecho del `SnackBar` reserva ese mismo hueco
+/// ([_fabReserve]): aunque sea invisible, el `Material` interno del
+/// `SnackBar` absorbe los toques en toda su superficie, y en la app la
+/// notificación se pinta en el `Scaffold` exterior (`MainNavigation`), a la
+/// misma altura que el FAB de `HomeScreen` — sin ese margen lo tapaba y el
+/// FAB replegado dejaba de responder.
 ///
 /// [show] devuelve el `ScaffoldFeatureController` de
 /// [ScaffoldMessengerState.showSnackBar] para que quien lo llama pueda
@@ -38,12 +41,12 @@ class AppSnackBar {
   AppSnackBar._();
 
   /// Ancho reservado a la derecha de la píldora para el FAB de "Añadir ropa"
-  /// replegado a solo icono (56 de lado + su propio margen de 16) más un
+  /// replegado a solo icono (56 de lado + su margen lateral, `kPageMargin`) más un
   /// hueco de separación de 12, para que nunca lleguen a tocarse. Asume que
   /// quien muestra la notificación repliega el FAB mientras esté visible
   /// (ver `_HomeScreenState`); si no lo hace, la píldora igualmente nunca
   /// pisa el FAB porque el FAB extendido cabe en el resto del ancho.
-  static const double _fabReserve = 56 + 16 + 12;
+  static const double _fabReserve = 56 + kPageMargin + 12;
 
   static ScaffoldFeatureController<SnackBar, SnackBarClosedReason> show(
     BuildContext context,
@@ -62,18 +65,22 @@ class AppSnackBar {
       AppSnackBarType.warning => (Icons.error_outline, scheme.secondary),
       AppSnackBarType.error => (Icons.highlight_off, scheme.error),
     };
-    final pillBackground = scheme.brightness == Brightness.dark
-        ? const Color(0xFF221F1D)
-        : Colors.white;
+    final isDark = scheme.brightness == Brightness.dark;
+    final pillBackground = isDark ? const Color(0xFF221F1D) : Colors.white;
 
-    // 16 es el margen izquierdo de la propia píldora (ver `margin` abajo):
+    // `kPageMargin` es el margen izquierdo de la propia píldora (ver `margin` abajo):
     // se resta aquí, no en `_fabReserve`, porque ese margen lo define este
     // mismo método y no el hueco del FAB.
     //
     // Se usa como ancho fijo de la píldora (no solo como límite máximo) para
     // que su borde derecho llegue de forma consistente hasta `_fabReserve`
     // del FAB en vez de ceñirse al contenido y dejar un hueco vacío.
-    final maxPillWidth = MediaQuery.sizeOf(context).width - 16 - _fabReserve;
+    //
+    // En pantallas anchas la píldora se alinea con la columna de contenido
+    // (`kMaxContentWidth`), igual que el FAB de `HomeScreen`.
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final sideInset = contentSideInset(screenWidth);
+    final maxPillWidth = screenWidth - 2 * sideInset - kPageMargin - _fabReserve;
     final pillWidth = maxPillWidth > 0 ? maxPillWidth : null;
 
     final messenger = ScaffoldMessenger.of(context);
@@ -83,7 +90,13 @@ class AppSnackBar {
         behavior: SnackBarBehavior.floating,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        margin: const EdgeInsets.only(left: 16, bottom: 16, right: 16),
+        // Derecha = hueco del FAB: el área táctil del SnackBar acaba donde
+        // acaba la píldora (ver comentario de la clase).
+        margin: EdgeInsets.only(
+          left: kPageMargin + sideInset,
+          bottom: 16,
+          right: _fabReserve + sideInset,
+        ),
         padding: EdgeInsets.zero,
         duration: duration,
         content: Align(
@@ -103,84 +116,88 @@ class AppSnackBar {
           // ven afectados.
           child: _SlideInPill(
             visibleDuration: duration,
-            child: Container(
-              height: 56,
-              width: pillWidth,
-              padding: const EdgeInsets.only(left: 6, right: 4),
-              decoration: ShapeDecoration(
-                color: pillBackground,
-                shape: StadiumBorder(
-                  side: BorderSide(color: color.withValues(alpha: 0.35)),
+            // Píldora de cristal (radio = mitad del alto → forma de cápsula):
+            // desenfoca el contenido que pasa por detrás y lleva el filo
+            // teñido con el color del tipo de aviso.
+            child: GlassCard(
+              radius: 28,
+              sigma: 24,
+              tint: pillBackground,
+              tintAlpha: 0.74,
+              edgeColor: color.withValues(alpha: 0.40),
+              shadows: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.40 : 0.16),
+                  blurRadius: 18,
+                  offset: const Offset(0, 8),
+                  spreadRadius: -6,
                 ),
-                shadows: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.16),
-                    blurRadius: 18,
-                    offset: const Offset(0, 8),
-                    spreadRadius: -6,
-                  ),
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    blurRadius: 8,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: pillWidth == null
-                    ? MainAxisSize.min
-                    : MainAxisSize.max,
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: color.withValues(alpha: 0.12),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.06),
+                  blurRadius: 8,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+              child: Container(
+                height: 56,
+                width: pillWidth,
+                padding: const EdgeInsets.only(left: 6, right: 4),
+                child: Row(
+                  mainAxisSize: pillWidth == null
+                      ? MainAxisSize.min
+                      : MainAxisSize.max,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: color.withValues(alpha: 0.12),
+                      ),
+                      child: Icon(icon, color: color, size: 20),
                     ),
-                    child: Icon(icon, color: color, size: 20),
-                  ),
-                  const SizedBox(width: 8),
-                  // `Expanded`/`Flexible` (según si la píldora tiene ancho
-                  // fijo o se ciñe al contenido) para que el mensaje ocupe
-                  // el hueco real que quede libre entre el icono y el botón
-                  // "Deshacer": sin esto, en pantallas estrechas con acción
-                  // presente, el mensaje podía quedarse literalmente en 0px
-                  // de ancho (invisible) en vez de solo truncarse con "…".
-                  pillWidth == null
-                      ? Flexible(
-                          child: Text(
-                            message,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: scheme.onSurface,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
+                    const SizedBox(width: 8),
+                    // `Expanded`/`Flexible` (según si la píldora tiene ancho
+                    // fijo o se ciñe al contenido) para que el mensaje ocupe
+                    // el hueco real que quede libre entre el icono y el botón
+                    // "Deshacer": sin esto, en pantallas estrechas con acción
+                    // presente, el mensaje podía quedarse literalmente en 0px
+                    // de ancho (invisible) en vez de solo truncarse con "…".
+                    pillWidth == null
+                        ? Flexible(
+                            child: Text(
+                              message,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: scheme.onSurface,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
+                            ),
+                          )
+                        : Expanded(
+                            child: Text(
+                              message,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: scheme.onSurface,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
                             ),
                           ),
-                        )
-                      : Expanded(
-                          child: Text(
-                            message,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: scheme.onSurface,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                  if (actionLabel != null && onAction != null) ...[
-                    const SizedBox(width: 4),
-                    _UndoButton(
-                      label: actionLabel,
-                      color: color,
-                      onPressed: onAction,
-                    ),
+                    if (actionLabel != null && onAction != null) ...[
+                      const SizedBox(width: 4),
+                      _UndoButton(
+                        label: actionLabel,
+                        color: color,
+                        onPressed: onAction,
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ),

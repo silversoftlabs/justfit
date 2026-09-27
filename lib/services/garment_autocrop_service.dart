@@ -108,6 +108,16 @@ abstract final class GarmentAutocropCache {
   static final Map<String, Future<Uint8List>> _cache = {};
   static final Map<String, Future<double>> _aspectRatioCache = {};
 
+  /// Recortes ya terminados, legibles de forma síncrona. Un `FutureBuilder`
+  /// recién montado no puede leer un `Future` ya completado en su primer
+  /// fotograma: sin esto, cada vez que se recrea una rejilla (p. ej. al
+  /// cambiar de categoría) las prendas parpadeaban un fotograma en blanco.
+  static final Map<String, Uint8List> _resolved = {};
+
+  /// El recorte de [imagePath] si ya está listo; `null` si aún no se ha
+  /// pedido, sigue en curso o falló.
+  static Uint8List? croppedIfReady(String imagePath) => _resolved[imagePath];
+
   // TEMPORAL (diagnóstico del congelamiento al entrar en Outfits, borrar tras
   // medir): cuenta cuántos recortes hay EN VUELO a la vez y mide cuánto tarda
   // cada uno y el lote completo. `compute()` lanza un isolate nuevo por
@@ -142,6 +152,7 @@ abstract final class GarmentAutocropCache {
     final callStopwatch = Stopwatch()..start();
     final future = _compute(imagePath).then((value) {
       _logBatchCompletion(batch, orderInBatch, callStopwatch);
+      _resolved[imagePath] = value;
       return value;
     }, onError: (Object e, StackTrace st) {
       _logBatchCompletion(batch, orderInBatch, callStopwatch, error: e);

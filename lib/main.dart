@@ -2,8 +2,10 @@ import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,6 +26,7 @@ import 'screens/favorites_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'theme/app_palette.dart';
+import 'theme/ios_design.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -105,7 +108,7 @@ class _Palette {
   // `theme/app_palette.dart`): ≥15:1 y ≥6:1 de contraste respectivamente
   // sobre `nightBg`/`nightSurface`/`nightSurfaceAlt`.
   static const nightTextPrimary = Color(0xFFF9F8F6);
-  static const nightTextSecondary = Color(0xFFA0AEC0);
+  static const nightTextSecondary = Color(0xFFA8A49E);
 }
 
 class ArmarioVirtualApp extends StatelessWidget {
@@ -181,6 +184,8 @@ class _App extends StatelessWidget {
           outlineVariant: _Palette.line,
           error: Color(0xFFB3261E),
           onError: Colors.white,
+          errorContainer: Color(0xFFF9DEDC),
+          onErrorContainer: Color(0xFF410E0B),
         ),
         scaffoldBackground: _Palette.background,
       ),
@@ -199,6 +204,8 @@ class _App extends StatelessWidget {
           outlineVariant: _Palette.nightBorder,
           error: Color(0xFFF2B8B5),
           onError: Color(0xFF601410),
+          errorContainer: Color(0xFF8C1D18),
+          onErrorContainer: Color(0xFFF9DEDC),
         ),
         scaffoldBackground: _Palette.nightBg,
       ),
@@ -238,36 +245,91 @@ ThemeData _buildTheme(ColorScheme scheme, {required Color scaffoldBackground}) {
     colorScheme: scheme,
     scaffoldBackgroundColor: scaffoldBackground,
     splashFactory: InkSparkle.splashFactory,
+    // Jerarquía tipográfica estilo iOS (SF): pesos refinados (700 títulos
+    // grandes · 600 títulos/encabezados · 400 cuerpo) y tracking ligeramente
+    // negativo en tamaños grandes, como hace SF Pro.
     textTheme: ThemeData(brightness: scheme.brightness).textTheme
         .apply(bodyColor: scheme.onSurface, displayColor: scheme.onSurface)
         .copyWith(
-          titleLarge: TextStyle(
+          headlineLarge: TextStyle(
+            fontSize: 34,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.6,
+            color: scheme.onSurface,
+          ),
+          headlineMedium: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.5,
+            color: scheme.onSurface,
+          ),
+          headlineSmall: TextStyle(
+            fontSize: 22,
             fontWeight: FontWeight.w600,
-            letterSpacing: 0.2,
+            letterSpacing: -0.3,
+            color: scheme.onSurface,
+          ),
+          titleLarge: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.3,
             color: scheme.onSurface,
           ),
           titleMedium: TextStyle(
+            fontSize: 17,
             fontWeight: FontWeight.w600,
-            letterSpacing: 0.1,
+            letterSpacing: -0.2,
             color: scheme.onSurface,
           ),
           titleSmall: TextStyle(
+            fontSize: 15,
             fontWeight: FontWeight.w600,
-            letterSpacing: 0.4,
+            letterSpacing: -0.1,
             color: scheme.onSurface.withValues(alpha: 0.85),
           ),
+          bodyLarge: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+            letterSpacing: -0.2,
+            color: scheme.onSurface,
+          ),
+          bodyMedium: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            letterSpacing: -0.1,
+            color: scheme.onSurface,
+          ),
+          bodySmall: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+            color: scheme.onSurfaceVariant,
+          ),
+          labelLarge: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.1,
+            color: scheme.onSurface,
+          ),
         ),
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+      },
+    ),
     appBarTheme: AppBarTheme(
-      backgroundColor: scaffoldBackground,
+      backgroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
       foregroundColor: scheme.onSurface,
       elevation: 0,
       scrolledUnderElevation: 0,
-      centerTitle: false,
+      centerTitle: true,
       titleTextStyle: TextStyle(
         color: scheme.onSurface,
-        fontSize: 22,
+        fontSize: 17,
         fontWeight: FontWeight.w600,
-        letterSpacing: 0.3,
+        letterSpacing: -0.3,
       ),
     ),
     cardTheme: CardThemeData(
@@ -275,9 +337,33 @@ ThemeData _buildTheme(ColorScheme scheme, {required Color scaffoldBackground}) {
       color: scheme.surface,
       surfaceTintColor: Colors.transparent,
       margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: scheme.outlineVariant, width: 1),
+      shape: squircle(
+        AppRadius.medium,
+        side: BorderSide(color: scheme.outlineVariant, width: 0.5),
+      ),
+    ),
+    dialogTheme: DialogThemeData(
+      backgroundColor: scheme.surface,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      shape: squircle(24),
+      titleTextStyle: TextStyle(
+        color: scheme.onSurface,
+        fontSize: 17,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.3,
+      ),
+    ),
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      modalElevation: 0,
+      clipBehavior: Clip.antiAlias,
+      shape: const RoundedSuperellipseBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppRadius.sheet),
+        ),
       ),
     ),
     chipTheme: ChipThemeData(
@@ -317,7 +403,7 @@ ThemeData _buildTheme(ColorScheme scheme, {required Color scaffoldBackground}) {
           fontWeight: FontWeight.w600,
           letterSpacing: 0.3,
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: squircle(AppRadius.medium),
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -329,14 +415,14 @@ ThemeData _buildTheme(ColorScheme scheme, {required Color scaffoldBackground}) {
           fontWeight: FontWeight.w600,
           letterSpacing: 0.3,
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: squircle(AppRadius.medium),
       ),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: scheme.primary,
       foregroundColor: scheme.onPrimary,
       elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: squircle(AppRadius.medium),
     ),
     segmentedButtonTheme: SegmentedButtonThemeData(
       style: SegmentedButton.styleFrom(
@@ -346,7 +432,7 @@ ThemeData _buildTheme(ColorScheme scheme, {required Color scaffoldBackground}) {
         selectedBackgroundColor: scheme.primary,
         selectedForegroundColor: Colors.white,
         side: BorderSide(color: scheme.outlineVariant),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: squircle(AppRadius.medium),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -366,8 +452,11 @@ ThemeData _buildTheme(ColorScheme scheme, {required Color scaffoldBackground}) {
       ),
     ),
     navigationBarTheme: NavigationBarThemeData(
-      backgroundColor: scheme.surface,
-      indicatorColor: scheme.secondary.withValues(alpha: isDark ? 0.28 : 0.22),
+      // Transparente: el fondo opaco y el filete superior los pinta el
+      // `DecoratedBox` de `MainNavigation`.
+      backgroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      indicatorColor: scheme.primary.withValues(alpha: isDark ? 0.28 : 0.22),
       elevation: 0,
       height: 66,
       // Iconos inactivos en `onSurfaceVariant` (en vez del color por
@@ -387,13 +476,17 @@ ThemeData _buildTheme(ColorScheme scheme, {required Color scaffoldBackground}) {
           fontWeight: states.contains(WidgetState.selected)
               ? FontWeight.w600
               : FontWeight.w500,
-          color: scheme.onSurface,
+          // Mismo criterio que los iconos: la pestaña activa no se reconoce
+          // solo por la píldora.
+          color: states.contains(WidgetState.selected)
+              ? scheme.onSurface
+              : scheme.onSurfaceVariant,
         ),
       ),
     ),
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: squircle(AppRadius.medium),
       insetPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
     ),
     extensions: [isDark ? AppPalette.dark : AppPalette.light],
@@ -407,8 +500,25 @@ class MainNavigation extends StatefulWidget {
   State<MainNavigation> createState() => _MainNavigationState();
 }
 
-class _MainNavigationState extends State<MainNavigation> {
+class _MainNavigationState extends State<MainNavigation>
+    with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
+
+  /// Fundido corto al cambiar de pestaña (el `IndexedStack` en sí cambia de
+  /// golpe): arranca en 1 y se reinicia a 0 en cada cambio.
+  late final AnimationController _tabFade = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 240),
+    value: 1,
+  );
+  late final Animation<double> _tabOpacity =
+      CurvedAnimation(parent: _tabFade, curve: AppCurves.easeOut);
+
+  @override
+  void dispose() {
+    _tabFade.dispose();
+    super.dispose();
+  }
 
   /// Pestañas ya visitadas al menos una vez: solo esas construyen su
   /// pantalla real dentro del `IndexedStack` de abajo (las demás quedan como
@@ -439,41 +549,63 @@ class _MainNavigationState extends State<MainNavigation> {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: [for (var i = 0; i < 3; i++) _buildTab(i)],
-      ),
-      bottomNavigationBar: DecoratedBox(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: Theme.of(context).colorScheme.outlineVariant,
+      // `extendBody`: el contenido se desliza por debajo de la barra de
+      // cristal. El `Scaffold` suma el alto de la barra al
+      // `MediaQuery.padding.bottom` del cuerpo, así que las listas (que ya
+      // reservan ese padding) y el FAB de `HomeScreen` quedan por encima.
+      extendBody: true,
+      body: Stack(
+        children: [
+          const Positioned.fill(child: AmbientBackdrop()),
+          FadeTransition(
+            opacity: _tabOpacity,
+            child: IndexedStack(
+              index: _currentIndex,
+              children: [for (var i = 0; i < 3; i++) _buildTab(i)],
             ),
           ),
-        ),
-        child: NavigationBar(
-          selectedIndex: _currentIndex,
-          onDestinationSelected: (index) => setState(() {
-            _currentIndex = index;
-            _visitedIndices.add(index);
-          }),
-          destinations: [
-            NavigationDestination(
-              icon: const Icon(Icons.checkroom_outlined),
-              selectedIcon: const Icon(Icons.checkroom),
-              label: t.t('nav_wardrobe'),
+        ],
+      ),
+      bottomNavigationBar: GlassSurface(
+        edge: AxisDirection.up,
+        sigma: 30,
+        tintAlpha: 0.62,
+        // Centrada y con ancho máximo: en escritorio los tres destinos no
+        // quedan separados cientos de píxeles entre sí.
+        child: Center(
+          heightFactor: 1,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: kMaxContentWidth),
+            child: NavigationBar(
+              selectedIndex: _currentIndex,
+              onDestinationSelected: (index) {
+                if (index == _currentIndex) return;
+                HapticFeedback.selectionClick();
+                _tabFade.forward(from: 0.25);
+                setState(() {
+                  _currentIndex = index;
+                  _visitedIndices.add(index);
+                });
+              },
+              destinations: [
+                NavigationDestination(
+                  icon: const Icon(Icons.checkroom_outlined),
+                  selectedIcon: const Icon(Icons.checkroom),
+                  label: t.t('nav_wardrobe'),
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.wb_sunny_outlined),
+                  selectedIcon: const Icon(Icons.wb_sunny),
+                  label: t.t('nav_daily_outfit'),
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.favorite_border),
+                  selectedIcon: const Icon(Icons.favorite),
+                  label: t.t('nav_favorites'),
+                ),
+              ],
             ),
-            NavigationDestination(
-              icon: const Icon(Icons.wb_sunny_outlined),
-              selectedIcon: const Icon(Icons.wb_sunny),
-              label: t.t('nav_daily_outfit'),
-            ),
-            NavigationDestination(
-              icon: const Icon(Icons.favorite_border),
-              selectedIcon: const Icon(Icons.favorite),
-              label: t.t('nav_favorites'),
-            ),
-          ],
+          ),
         ),
       ),
     );

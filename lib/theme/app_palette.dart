@@ -78,7 +78,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
 
   // Fondo de tarjetas/modales #1E1E1E · elevado #262626 · borde #333333 ·
   // texto primario #F9F8F6 (≥15:1 sobre todos los fondos oscuros de arriba)
-  // · texto secundario #A0AEC0 (≥6:1 sobre todos ellos) · icono inactivo
+  // · texto secundario #A8A49E (gris neutro-cálido) (≥6:1 sobre todos ellos) · icono inactivo
   // #8E8E93 — ver auditoría de contraste WCAG AA.
   static const dark = AppPalette(
     cardBeige: Color(0xFF262626),
@@ -87,7 +87,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     strongText: Color(0xFFF9F8F6),
     favoritePinkBg: Color(0xFF4A2E33),
     favoritePinkText: Color(0xFFE3AEB6),
-    textSecondary: Color(0xFFA0AEC0),
+    textSecondary: Color(0xFFA8A49E),
     iconMuted: Color(0xFF8E8E93),
     garmentPhotoBackground: Color(0xFF1E1E1E),
   );

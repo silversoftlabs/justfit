@@ -13,6 +13,7 @@ import '../widgets/ai_outfit_card.dart';
 import '../widgets/app_snackbar.dart';
 import '../widgets/garment_image.dart';
 import '../widgets/pressable_scale.dart';
+import '../theme/ios_design.dart';
 
 const _monthNames = [
   'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
@@ -69,10 +70,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   void _openAssignment(DateTime day, {bool startWithAi = false}) {
     HapticFeedback.lightImpact();
-    showModalBottomSheet(
+    showGlassSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      wrap: false,
       builder: (_) => _AssignmentSheet(day: day, startWithAi: startWithAi),
     );
   }
@@ -303,7 +304,12 @@ class _PlanThumb extends StatelessWidget {
     return Container(
       alignment: Alignment.center,
       padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(color: scheme.surface, borderRadius: BorderRadius.circular(14)),
+      decoration: ShapeDecoration(
+        color: scheme.surface,
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+      ),
       child: garment == null
           ? Icon(Icons.help_outline, color: scheme.outline, size: 22)
           : GarmentImage(imagePath: garment!.imagePath, fit: BoxFit.contain),
@@ -322,10 +328,12 @@ class _EmptyDayCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: scheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: cardHairlineColor(context)),
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(color: cardHairlineColor(context)),
+        ),
       ),
       child: Column(
         children: [
@@ -344,7 +352,7 @@ class _EmptyDayCard extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             height: 50,
-            child: FilledButton.icon(
+            child: PressableScale.passive(child: FilledButton.icon(
               onPressed: onTap,
               icon: Icon(Icons.auto_awesome, color: scheme.onPrimary, size: 18),
               label: Text(
@@ -352,9 +360,9 @@ class _EmptyDayCard extends StatelessWidget {
                 style: TextStyle(color: scheme.onPrimary, fontWeight: FontWeight.w600),
               ),
               style: FilledButton.styleFrom(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: squircle(14),
               ),
-            ),
+            )),
           ),
         ],
       ),
@@ -376,11 +384,13 @@ class _PlannedDayCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: scheme.surface,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: cardHairlineColor(context)),
-        boxShadow: cardElevation(context, strength: 0.6),
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(color: cardHairlineColor(context)),
+        ),
+        shadows: cardElevation(context, strength: 0.6),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -396,9 +406,11 @@ class _PlannedDayCard extends StatelessWidget {
               if (occasion != null && occasion.isNotEmpty)
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
+                  decoration: ShapeDecoration(
                     color: scheme.secondary.withValues(alpha: 0.14),
-                    borderRadius: BorderRadius.circular(30),
+                    shape: RoundedSuperellipseBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
                   ),
                   child: Text(
                     occasion,
@@ -424,16 +436,16 @@ class _PlannedDayCard extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             height: 48,
-            child: OutlinedButton.icon(
+            child: PressableScale.passive(child: OutlinedButton.icon(
               onPressed: onChange,
               icon: const Icon(Icons.autorenew, size: 18),
               label: const Text('Cambiar Outfit'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: scheme.onSurface,
                 side: BorderSide(color: scheme.outlineVariant),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: squircle(14),
               ),
-            ),
+            )),
           ),
         ],
       ),
@@ -487,17 +499,19 @@ class _UpcomingSection extends StatelessWidget {
                   child: Container(
                     width: 168,
                     padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
+                    decoration: ShapeDecoration(
                       color: scheme.surface,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: cardHairlineColor(context)),
+                      shape: RoundedSuperellipseBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        side: BorderSide(color: cardHairlineColor(context)),
+                      ),
                     ),
                     child: Row(
                       children: [
                         SizedBox(
                           width: 44,
                           height: 44,
-                          child: ClipRRect(
+                          child: ClipRSuperellipse(
                             borderRadius: BorderRadius.circular(10),
                             child: Container(
                               color: scheme.surfaceContainerHighest,
@@ -574,11 +588,8 @@ class _AssignmentSheetState extends State<_AssignmentSheet> {
   List<OutfitRecommendation>? _aiOutfits;
 
   Future<void> _pickGarment(List<Garment> options, ValueChanged<Garment> onPicked) async {
-    final picked = await showModalBottomSheet<Garment>(
+    final picked = await showGlassSheet<Garment>(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
       builder: (context) => SafeArea(
         child: options.isEmpty
             ? const Padding(
@@ -593,7 +604,7 @@ class _AssignmentSheetState extends State<_AssignmentSheet> {
                       leading: SizedBox(
                         width: 44,
                         height: 44,
-                        child: ClipRRect(
+                        child: ClipRSuperellipse(
                           borderRadius: BorderRadius.circular(8),
                           child: GarmentImage(imagePath: g.imagePath, fit: BoxFit.cover),
                         ),
@@ -672,10 +683,9 @@ class _AssignmentSheetState extends State<_AssignmentSheet> {
 
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.85,
-      child: ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      child: GlassSheetSurface(
+        showHandle: false,
         child: Container(
-          color: Theme.of(context).scaffoldBackgroundColor,
           child: (plan != null && !_reassigning)
               ? _buildExistingPlan(context, plan, wardrobe)
               : _buildPicker(context, wardrobe),
@@ -691,9 +701,11 @@ class _AssignmentSheetState extends State<_AssignmentSheet> {
         child: Container(
           width: 40,
           height: 4,
-          decoration: BoxDecoration(
+          decoration: ShapeDecoration(
             color: Theme.of(context).colorScheme.outlineVariant,
-            borderRadius: BorderRadius.circular(2),
+            shape: RoundedSuperellipseBorder(
+              borderRadius: BorderRadius.circular(2),
+            ),
           ),
         ),
       ),
@@ -725,14 +737,16 @@ class _AssignmentSheetState extends State<_AssignmentSheet> {
               for (final id in plan.garmentIds) ...[
                 Expanded(
                   child: byId.containsKey(id)
-                      ? ClipRRect(
+                      ? ClipRSuperellipse(
                           borderRadius: BorderRadius.circular(16),
                           child: GarmentImage(imagePath: byId[id]!.imagePath, fit: BoxFit.cover),
                         )
                       : Container(
-                          decoration: BoxDecoration(
+                          decoration: ShapeDecoration(
                             color: scheme.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(16),
+                            shape: RoundedSuperellipseBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
                           ),
                           child: Icon(Icons.help_outline, color: scheme.outline),
                         ),
@@ -746,23 +760,23 @@ class _AssignmentSheetState extends State<_AssignmentSheet> {
         Row(
           children: [
             Expanded(
-              child: OutlinedButton.icon(
+              child: PressableScale.passive(child: OutlinedButton.icon(
                 onPressed: () {
                   HapticFeedback.selectionClick();
                   setState(() => _reassigning = true);
                 },
                 icon: const Icon(Icons.autorenew),
                 label: const Text('Reasignar'),
-              ),
+              )),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: OutlinedButton.icon(
+              child: PressableScale.passive(child: OutlinedButton.icon(
                 onPressed: _remove,
                 icon: const Icon(Icons.delete_outline),
                 label: const Text('Quitar'),
                 style: OutlinedButton.styleFrom(foregroundColor: scheme.error),
-              ),
+              )),
             ),
           ],
         ),
@@ -827,18 +841,18 @@ class _AssignmentSheetState extends State<_AssignmentSheet> {
                       ],
                     ),
                     const SizedBox(height: 24),
-                    FilledButton.icon(
+                    PressableScale.passive(child: FilledButton.icon(
                       onPressed: _saveManual,
                       icon: const Icon(Icons.check),
                       label: const Text('Guardar'),
                       style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(50)),
-                    ),
+                    )),
                   ],
                 ),
                 ListView(
                   padding: const EdgeInsets.all(20),
                   children: [
-                    FilledButton.tonalIcon(
+                    PressableScale.passive(child: FilledButton.tonalIcon(
                       onPressed: _aiLoading ? null : _generateAi,
                       icon: _aiLoading
                           ? const SizedBox(
@@ -849,7 +863,7 @@ class _AssignmentSheetState extends State<_AssignmentSheet> {
                           : const Icon(Icons.smart_toy_outlined),
                       label: Text(_aiLoading ? 'Generando...' : 'Generar sugerencias'),
                       style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(50)),
-                    ),
+                    )),
                     if (_aiError != null) ...[
                       const SizedBox(height: 16),
                       Text(
@@ -890,17 +904,19 @@ class _ManualSlot extends StatelessWidget {
       haptic: PressHaptic.selection,
       child: Container(
         padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color: scheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: scheme.outlineVariant),
+          shape: RoundedSuperellipseBorder(
+            borderRadius: BorderRadius.circular(14),
+            side: BorderSide(color: scheme.outlineVariant),
+          ),
         ),
         child: Row(
           children: [
             SizedBox(
               width: 48,
               height: 48,
-              child: ClipRRect(
+              child: ClipRSuperellipse(
                 borderRadius: BorderRadius.circular(10),
                 child: garment == null
                     ? Container(

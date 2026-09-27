@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 
 import '../theme/app_palette.dart';
+import '../theme/ios_design.dart';
+import '../widgets/pressable_scale.dart';
 
 /// Pantalla de edición manual del recorte de una prenda: deja retocar a mano
 /// el canal alfa de la foto ya procesada (ver `applyCutoutAlpha` /
@@ -308,7 +310,7 @@ class _CropEditScreenState extends State<CropEditScreen> {
     final ready = _working != null && _display != null;
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: GlassAppBar(
         title: const Text('Ajustar recorte'),
         actions: [
           IconButton(
@@ -337,7 +339,7 @@ class _CropEditScreenState extends State<CropEditScreen> {
                         builder: (context, constraints) {
                           final canvasSize = Size(constraints.maxWidth, constraints.maxHeight);
                           final fit = _fitFor(canvasSize);
-                          return ClipRRect(
+                          return ClipRSuperellipse(
                             borderRadius: BorderRadius.circular(16),
                             child: GestureDetector(
                               key: const Key('cropEditCanvas'),
@@ -505,7 +507,7 @@ class _CropControls extends StatelessWidget {
             const SizedBox(height: 8),
             SizedBox(
               width: double.infinity,
-              child: FilledButton.icon(
+              child: PressableScale.passive(child: FilledButton.icon(
                 onPressed: onApply,
                 icon: busy
                     ? const SizedBox(
@@ -515,7 +517,7 @@ class _CropControls extends StatelessWidget {
                       )
                     : const Icon(Icons.check),
                 label: const Text('Aplicar cambios'),
-              ),
+              )),
             ),
           ],
         ),

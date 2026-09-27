@@ -13,6 +13,7 @@ import '../widgets/empty_state.dart';
 import '../widgets/outfit_flat_lay_view.dart';
 import '../widgets/pressable_scale.dart';
 import '../widgets/shimmer_box.dart';
+import '../theme/ios_design.dart';
 
 /// Pestaña "Favoritos": los outfits que el usuario ha guardado con el corazón
 /// desde "Outfit del día". Cada tarjeta muestra la composición completa del
@@ -29,7 +30,10 @@ class FavoritesScreen extends StatelessWidget {
     final entries = favorites.favorites;
 
     return Scaffold(
+      // Transparente: deja ver el `AmbientBackdrop` de `MainNavigation`.
+      backgroundColor: Colors.transparent,
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             Padding(
@@ -39,9 +43,9 @@ class FavoritesScreen extends StatelessWidget {
                 child: Text(
                   'Favoritos',
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 34,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 0.1,
+                    letterSpacing: -0.6,
                     color: scheme.onSurface,
                   ),
                 ),
@@ -51,14 +55,27 @@ class FavoritesScreen extends StatelessWidget {
               child: loading
                   ? const _ShimmerList()
                   : entries.isEmpty
-                      ? const AppEmptyState(
-                          icon: Icons.favorite_border,
-                          title: 'Sin favoritos todavía',
-                          subtitle:
-                              'Aún no has guardado ningún outfit favorito',
+                      // Padding inferior = barra de navegación: con
+                      // `extendBody` el cuerpo llega hasta el borde y el
+                      // estado vacío se centraría medio tapado por ella.
+                      ? Padding(
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.paddingOf(context).bottom,
+                          ),
+                          child: const AppEmptyState(
+                            icon: Icons.favorite_border,
+                            title: 'Sin favoritos todavía',
+                            subtitle:
+                                'Aún no has guardado ningún outfit favorito',
+                          ),
                         )
                       : ListView.separated(
-                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+                          padding: EdgeInsets.fromLTRB(
+                            kPageMargin,
+                            12,
+                            kPageMargin,
+                            24 + MediaQuery.paddingOf(context).bottom,
+                          ),
                           itemCount: entries.length,
                           separatorBuilder: (_, _) => const SizedBox(height: 16),
                           itemBuilder: (context, index) {
@@ -101,7 +118,12 @@ class _ShimmerList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+      padding: EdgeInsets.fromLTRB(
+        kPageMargin,
+        12,
+        kPageMargin,
+        24 + MediaQuery.paddingOf(context).bottom,
+      ),
       itemCount: 4,
       separatorBuilder: (_, _) => const SizedBox(height: 16),
       itemBuilder: (context, index) => const ShimmerBox(
@@ -174,11 +196,13 @@ class _FavoriteOutfitCard extends StatelessWidget {
       onTap: () => _FavoriteDetailSheet.show(context, favorite.id),
       child: Container(
         height: _kCardHeight,
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color: palette.cardBeige,
-          borderRadius: radius,
-          border: Border.all(color: cardHairlineColor(context)),
-          boxShadow: cardElevation(context, strength: 0.6),
+          shape: RoundedSuperellipseBorder(
+            borderRadius: radius,
+            side: BorderSide(color: cardHairlineColor(context)),
+          ),
+          shadows: cardElevation(context, strength: 0.6),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -186,7 +210,7 @@ class _FavoriteOutfitCard extends StatelessWidget {
             // Lado izquierdo (~50%): visualización de ropa.
             Expanded(
               flex: 5,
-              child: ClipRRect(
+              child: ClipRSuperellipse(
                 borderRadius: const BorderRadius.horizontal(
                   left: Radius.circular(16),
                 ),
@@ -320,10 +344,12 @@ class _TagChip extends StatelessWidget {
       padding: compact
           ? const EdgeInsets.symmetric(horizontal: 8, vertical: 3)
           : const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: palette.chipBeige,
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: palette.chipBeigeBorder),
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(30),
+          side: BorderSide(color: palette.chipBeigeBorder),
+        ),
       ),
       child: Text(
         label,
@@ -414,10 +440,10 @@ class _FavoriteDetailSheet extends StatelessWidget {
 
   static Future<void> show(BuildContext context, String favoriteId) {
     HapticFeedback.lightImpact();
-    return showModalBottomSheet<void>(
+    return showGlassSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      wrap: false,
       builder: (_) => _FavoriteDetailSheet(
         favoriteId: favoriteId,
         hostContext: context,
@@ -454,7 +480,7 @@ class _FavoriteDetailSheet extends StatelessWidget {
 
   Future<void> _edit(BuildContext context, FavoriteOutfit favorite) async {
     HapticFeedback.lightImpact();
-    await showDialog<void>(
+    await showSoftDialog<void>(
       context: context,
       builder: (_) => _EditFavoriteDialog(
         favorite: favorite,
@@ -502,13 +528,12 @@ class _FavoriteDetailSheet extends StatelessWidget {
             ? favorite.occasion!.trim()
             : 'Outfit favorito');
 
-    return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+    return GlassSheetSurface(
+      showHandle: false,
       child: Container(
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.9,
         ),
-        color: Theme.of(context).scaffoldBackgroundColor,
         child: SafeArea(
           top: false,
           child: SingleChildScrollView(
@@ -521,9 +546,11 @@ class _FavoriteDetailSheet extends StatelessWidget {
                     width: 40,
                     height: 4,
                     margin: const EdgeInsets.only(bottom: 20),
-                    decoration: BoxDecoration(
+                    decoration: ShapeDecoration(
                       color: scheme.outlineVariant,
-                      borderRadius: BorderRadius.circular(2),
+                      shape: RoundedSuperellipseBorder(
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
                   ),
                 ),
@@ -540,25 +567,23 @@ class _FavoriteDetailSheet extends StatelessWidget {
                 const SizedBox(height: 24),
                 _MetadataSection(favorite: favorite, garments: garments),
                 const SizedBox(height: 24),
-                FilledButton.icon(
+                PressableScale.passive(child: FilledButton.icon(
                   onPressed: () => _wearToday(context, favorite, garments),
                   icon: const Icon(Icons.checkroom),
                   label: const Text('Ponérmelo hoy'),
-                ),
+                )),
                 const SizedBox(height: 10),
-                OutlinedButton.icon(
+                PressableScale.passive(child: OutlinedButton.icon(
                   onPressed: () => _edit(context, favorite),
                   icon: const Icon(Icons.edit_outlined),
                   label: const Text('Editar'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: scheme.onSurface,
                     side: BorderSide(color: scheme.outlineVariant),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                    shape: squircle(16),
                     minimumSize: const Size.fromHeight(48),
                   ),
-                ),
+                )),
                 const SizedBox(height: 10),
                 TextButton.icon(
                   onPressed: () => _delete(context, favorite),
@@ -594,10 +619,12 @@ class _OutfitBreakdown extends StatelessWidget {
       return Container(
         height: 120,
         alignment: Alignment.center,
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color: palette.garmentPhotoBackground,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: cardHairlineColor(context)),
+          shape: RoundedSuperellipseBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: cardHairlineColor(context)),
+          ),
         ),
         child: Text(
           'Las prendas de este outfit ya no están en tu armario',
@@ -661,10 +688,12 @@ class _BreakdownTile extends StatelessWidget {
             height: 116,
             width: 116,
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
+            decoration: ShapeDecoration(
               color: palette.garmentPhotoBackground,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: cardHairlineColor(context)),
+              shape: RoundedSuperellipseBorder(
+                borderRadius: BorderRadius.circular(14),
+                side: BorderSide(color: cardHairlineColor(context)),
+              ),
             ),
             child: AutocroppedGarment(imagePath: garment.imagePath),
           ),
@@ -704,10 +733,12 @@ class _MetadataSection extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: palette.cardBeige,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: cardHairlineColor(context)),
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: cardHairlineColor(context)),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -854,7 +885,7 @@ class _EditFavoriteDialogState extends State<_EditFavoriteDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: squircle(20),
       title: const Text('Editar outfit'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -886,7 +917,7 @@ class _EditFavoriteDialogState extends State<_EditFavoriteDialog> {
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('Cancelar'),
         ),
-        FilledButton(onPressed: _save, child: const Text('Guardar')),
+        PressableScale.passive(child: FilledButton(onPressed: _save, child: const Text('Guardar'))),
       ],
     );
   }
